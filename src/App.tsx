@@ -83,7 +83,7 @@ function Box({ children }: { children: ReactNode }) {
 // Movie List
 function MovieList({ movies }: { movies: Movie[] }) {
   return (
-    <ul className='list'>
+    <ul className='list list-none py-1 px-0'>
       {movies.map((movie) => (
         <MovieItem key={movie.imdbID} movie={movie} />
       ))}
@@ -94,7 +94,7 @@ function MovieList({ movies }: { movies: Movie[] }) {
 // Movie Item
 function MovieItem({ movie }: { movie: Movie }) {
   return (
-    <li>
+    <li className=''>
       <img src={movie.Poster} alt={`${movie.Title} poster`} />
       <h3>{movie.Title}</h3>
       <div>
@@ -192,7 +192,6 @@ export default function App() {
           <WatchedList watched={tempWatchedData} />
         </Box>
       </Main>
-      <div>Hello World!</div>
 
       <StarRating maxRating={10} color='#fcc419' />
     </>
