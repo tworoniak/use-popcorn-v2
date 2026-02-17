@@ -9,6 +9,7 @@ export type WatchedMovie = Movie & {
   runtime: number;
   imdbRating: number;
   userRating: number;
+  countRatingDecisions?: number;
 };
 
 export const tempMovieData: Movie[] = [

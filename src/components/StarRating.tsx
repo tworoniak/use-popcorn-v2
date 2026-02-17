@@ -1,31 +1,55 @@
-import { useState, type SetStateAction } from 'react';
+import { useState } from 'react';
 import { Star } from 'lucide-react';
 
-type StarRatingProps = {
+export type StarRatingProps = {
   maxRating?: number;
+
+  /**
+   * Optional controlled value. If provided, StarRating will display this rating
+   * instead of its internal state.
+   */
   rating?: number;
+
+  /**
+   * Optional initial value for uncontrolled usage.
+   */
+  defaultRating?: number;
+
   color?: string;
   size?: number | string;
+
+  /**
+   * Called whenever the user picks a rating.
+   */
+  onSetRating?: (rating: number) => void;
 };
 
-const containerStyle = {
+const containerStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: '0.5rem',
 };
 
-const starContainerStyle = {
+const starContainerStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  // gap: '0.25rem',
 };
 
-const starStyle = {
+const starStyle: React.CSSProperties = {
   width: '24px',
   height: '24px',
   display: 'block',
   cursor: 'pointer',
+};
+
+type StarItemProps = {
+  onRate: () => void;
+  full: boolean;
+  color: string;
+  size: number | string;
+  onHoverIn: () => void;
+  onHoverOut: () => void;
 };
 
 const StarItem = ({
@@ -35,14 +59,7 @@ const StarItem = ({
   size,
   onHoverIn,
   onHoverOut,
-}: {
-  onRate: () => void;
-  full: boolean;
-  color: string;
-  size: number | string;
-  onHoverIn: () => void;
-  onHoverOut: () => void;
-}) => (
+}: StarItemProps) => (
   <span
     role='button'
     style={starStyle}
@@ -58,19 +75,26 @@ const StarItem = ({
   </span>
 );
 
-const StarRating = ({
+export default function StarRating({
   maxRating = 3,
   color = '#fcc419',
   size = 24,
-}: StarRatingProps) => {
-  const [rating, setRating] = useState(0);
-  const [tempRating, setTempRating] = useState(0);
+  rating: controlledRating,
+  defaultRating = 0,
+  onSetRating,
+}: StarRatingProps) {
+  const [internalRating, setInternalRating] = useState<number>(defaultRating);
+  const [tempRating, setTempRating] = useState<number>(0);
 
-  const handleRating = (rating: SetStateAction<number>) => {
-    setRating(rating);
+  const isControlled = typeof controlledRating === 'number';
+  const rating = isControlled ? controlledRating : internalRating;
+
+  const handleRating = (next: number) => {
+    if (!isControlled) setInternalRating(next);
+    onSetRating?.(next);
   };
 
-  const textStyle = {
+  const textStyle: React.CSSProperties = {
     lineHeight: '1',
     margin: 0,
   };
@@ -93,6 +117,4 @@ const StarRating = ({
       <p style={{ ...textStyle, color }}>{tempRating || rating || ''}</p>
     </div>
   );
-};
-
-export default StarRating;
+}
