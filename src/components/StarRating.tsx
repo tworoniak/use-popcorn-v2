@@ -16,7 +16,9 @@ const containerStyle = {
 
 const starContainerStyle = {
   display: 'flex',
-  gap: '0.25rem',
+  alignItems: 'center',
+  justifyContent: 'center',
+  // gap: '0.25rem',
 };
 
 const textStyle = {
@@ -35,12 +37,14 @@ const StarItem = ({
   onRate,
   full,
   color,
+  size,
   onHoverIn,
   onHoverOut,
 }: {
   onRate: () => void;
   full: boolean;
   color: string;
+  size: number | string;
   onHoverIn: () => void;
   onHoverOut: () => void;
 }) => (
@@ -52,14 +56,18 @@ const StarItem = ({
     onMouseLeave={onHoverOut}
   >
     {full ? (
-      <Star fill={color} strokeWidth={1.5} color={color} />
+      <Star fill={color} strokeWidth={1.5} color={color} size={size} />
     ) : (
-      <Star strokeWidth={1.5} color={color} />
+      <Star strokeWidth={1.5} color={color} size={size} />
     )}
   </span>
 );
 
-const StarRating = ({ maxRating = 3, color = '#fcc419' }: StarRatingProps) => {
+const StarRating = ({
+  maxRating = 3,
+  color = '#fcc419',
+  size = 24,
+}: StarRatingProps) => {
   const [rating, setRating] = useState(0);
   const [tempRating, setTempRating] = useState(0);
 
@@ -74,6 +82,7 @@ const StarRating = ({ maxRating = 3, color = '#fcc419' }: StarRatingProps) => {
           <StarItem
             key={i}
             color={color}
+            size={size}
             onRate={() => handleRating(i + 1)}
             onHoverIn={() => setTempRating(i + 1)}
             onHoverOut={() => setTempRating(0)}
@@ -87,3 +96,7 @@ const StarRating = ({ maxRating = 3, color = '#fcc419' }: StarRatingProps) => {
 };
 
 export default StarRating;
+
+{
+  /* <Star size={40} color="#fcc419" strokeWidth={1.5} /> */
+}
