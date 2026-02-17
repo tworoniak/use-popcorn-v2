@@ -21,11 +21,6 @@ const starContainerStyle = {
   // gap: '0.25rem',
 };
 
-const textStyle = {
-  lineHeight: '1',
-  margin: 0,
-};
-
 const starStyle = {
   width: '24px',
   height: '24px',
@@ -75,6 +70,11 @@ const StarRating = ({
     setRating(rating);
   };
 
+  const textStyle = {
+    lineHeight: '1',
+    margin: 0,
+  };
+
   return (
     <div style={containerStyle}>
       <div style={starContainerStyle}>
@@ -96,7 +96,3 @@ const StarRating = ({
 };
 
 export default StarRating;
-
-{
-  /* <Star size={40} color="#fcc419" strokeWidth={1.5} /> */
-}
