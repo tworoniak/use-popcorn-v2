@@ -10,7 +10,6 @@ import {
 import NavBar from './components/layout/NavBar';
 import Main from './components/layout/Main';
 import Box from './components/layout/Box';
-
 import Search from './components/movies/Search';
 import NumResults from './components/movies/NumResults';
 import MovieList from './components/movies/MovieList';
@@ -39,7 +38,10 @@ export default function App() {
         </Box>
       </Main>
 
-      <StarRating maxRating={10} color='#fcc419' />
+      <div>
+        <h2>Star Rating</h2>
+        <StarRating maxRating={10} color='var(--color-yellow)' />
+      </div>
     </>
   );
 }
