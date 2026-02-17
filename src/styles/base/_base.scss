@@ -1,8 +1,18 @@
-@use '../abstracts/variables';
+@use '../abstracts' as *;
+
+html {
+  font-size: 62.5%;
+}
 
 body {
-  font-family: variables.$font-main;
-  background: var(--color-bg-900);
+  font-family: $font-main;
+  background-color: var(--color-background-900);
   color: var(--color-text);
   margin: 0;
+  padding: $spacing-24;
+}
+
+#root {
+  @include flex-column-space-between;
+  min-height: 100%;
 }
