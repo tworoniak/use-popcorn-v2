@@ -1,8 +1,24 @@
+@use '../abstracts' as *;
+
 /* ******* */
 
 .details {
   line-height: 1.4;
   font-size: 1.4rem;
+
+  @include respond($bp-md) {
+    position: static;
+    height: auto;
+  }
+
+  @media (max-width: $bp-md) {
+    position: fixed;
+    inset: 0;
+    background: var(--color-background-900);
+    z-index: 5000;
+    overflow-y: auto;
+    border-radius: 0;
+  }
 
   header {
     display: flex;

@@ -34,9 +34,13 @@
   }
 
   h1 {
-    font-size: 2.4rem;
+    font-size: 2rem;
     font-weight: 600;
     color: #fff;
+
+    @include respond($bp-lg) {
+      font-size: 2.4rem;
+    }
   }
 }
 

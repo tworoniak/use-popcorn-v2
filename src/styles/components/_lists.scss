@@ -1,3 +1,5 @@
+@use '../abstracts' as *;
+
 .list {
   list-style: none;
   padding: 0.8rem 0;
@@ -12,7 +14,7 @@
 
     align-items: center;
 
-    padding: 1.4rem 1.8rem;
+    padding: 1.2rem 1.6rem;
     margin: 0.6rem 1rem;
 
     border-radius: 1.2rem;
@@ -29,13 +31,23 @@
       background: rgba(103, 65, 217, 0.12);
       box-shadow: 0 10px 22px rgba(103, 65, 217, 0.18);
     }
+
+    @include respond($bp-md) {
+      padding: 1.4rem 1.8rem;
+    }
   }
 
   img {
-    width: 100%;
+    width: 5rem;
+    height: 7.2rem;
+    object-fit: cover;
     border-radius: 0.6rem;
-    grid-row: 1 / -1;
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+
+    @include respond($bp-md) {
+      width: 100%;
+      grid-row: 1 / -1;
+    }
   }
 
   h3 {
