@@ -253,7 +253,10 @@ export default function App() {
             />
           ) : (
             <>
-              <WatchedSummary watched={watchedVisible} />
+              <WatchedSummary
+                watched={watchedVisible}
+                totalWatched={watched.length}
+              />
 
               {watched.length > 0 && (
                 <WatchedControls
