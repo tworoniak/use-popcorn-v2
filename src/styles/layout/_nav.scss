@@ -1,19 +1,33 @@
+@use '../abstracts' as *;
+
 // Navigation bar styles
 .nav-bar {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  align-items: center;
-  height: 7.2rem;
-  padding: 0 3.2rem;
+  grid-template-columns: 1fr;
+  gap: 1.6rem;
+  padding: 1.6rem;
+  height: auto;
   background-color: var(--color-primary);
   border-radius: 0.9rem;
+
+  @include respond($bp-lg) {
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    height: 7.2rem;
+    padding: 0 3.2rem;
+  }
 }
 
 // *******
 .logo {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.8rem;
+
+  @include respond($bp-lg) {
+    justify-content: flex-start;
+  }
 
   span {
     font-size: 3.2rem;
@@ -96,6 +110,10 @@
 }
 
 .num-results {
-  justify-self: end;
+  justify-self: center;
   font-size: 1.8rem;
+
+  @include respond($bp-lg) {
+    justify-self: end;
+  }
 }

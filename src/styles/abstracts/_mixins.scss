@@ -38,3 +38,10 @@
   flex-direction: column;
   justify-content: space-between;
 }
+
+// Media Query Mixin
+@mixin respond($breakpoint) {
+  @media (min-width: $breakpoint) {
+    @content;
+  }
+}
