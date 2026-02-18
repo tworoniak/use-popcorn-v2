@@ -5,11 +5,13 @@ type MovieListProps = {
   movies: Movie[];
   selectedId: string | null;
   onSelectMovie: (id: string) => void;
+  watchedIds: Set<string>;
 };
 
 export default function MovieList({
   movies,
   selectedId,
+  watchedIds,
   onSelectMovie,
 }: MovieListProps) {
   return (
@@ -20,6 +22,7 @@ export default function MovieList({
           movie={movie}
           selectedId={selectedId}
           onSelectMovie={onSelectMovie}
+          isWatched={watchedIds.has(movie.imdbID)}
         />
       ))}
     </ul>

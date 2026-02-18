@@ -15,11 +15,11 @@ import MovieList from './components/movies/MovieList';
 import WatchedSummary from './components/movies/WatchedSummary';
 import WatchedList from './components/movies/WatchedList';
 import MovieDetails from './components/movies/MovieDetails';
-import Loader from './components/ui/Loader';
 import ErrorMessage from './components/ui/ErrorMessage';
 import Pagination from './components/ui/Pagination';
 import Footer from './components/layout/Footer';
 import EmptyState from './components/ui/EmptyState';
+import MovieListSkeleton from './components/ui/MovieListSkeleton';
 
 export default function App() {
   const [query, setQuery] = useState('');
@@ -39,6 +39,8 @@ export default function App() {
     'watched',
   );
 
+  const watchedIds = new Set(watched.map((m) => m.imdbID));
+
   useKey('Slash', () => {
     document.getElementById('search')?.focus();
   });
@@ -52,7 +54,12 @@ export default function App() {
       if (prevTrim !== nextTrim) {
         setPage(1);
         setSelectedId(null);
+
+        // scroll list to top when new search begins
+        const el = document.getElementById('movies-scroll');
+        el?.scrollTo({ top: 0, behavior: 'auto' });
       }
+
       return nextQuery;
     });
   }
@@ -73,14 +80,21 @@ export default function App() {
     setWatched((prev) => prev.filter((movie) => movie.imdbID !== id));
   }
 
+  function scrollMoviesToTop() {
+    const el = document.getElementById('movies-scroll');
+    el?.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   function handlePrevPage() {
     setPage((p) => Math.max(1, p - 1));
     setSelectedId(null); // optional UX: close details when paging
+    scrollMoviesToTop();
   }
 
   function handleNextPage() {
     setPage((p) => p + 1);
     setSelectedId(null); // optional UX: close details when paging
+    scrollMoviesToTop();
   }
 
   return (
@@ -95,7 +109,7 @@ export default function App() {
       </NavBar>
 
       <Main>
-        <Box>
+        <Box scrollId='movies-scroll'>
           {query.trim().length < 3 && (
             <EmptyState
               title='Search for a movie'
@@ -104,7 +118,8 @@ export default function App() {
           )}
 
           {query.trim().length >= 3 && isLoading && (
-            <Loader text='Searching...' />
+            // <Loader text='Searching...' />
+            <MovieListSkeleton />
           )}
 
           {query.trim().length >= 3 && !isLoading && error && (
@@ -130,6 +145,7 @@ export default function App() {
                   movies={movies}
                   selectedId={selectedId}
                   onSelectMovie={handleSelectMovie}
+                  watchedIds={watchedIds}
                 />
 
                 <Pagination

@@ -31,6 +31,7 @@ It allows users to search movies via the OMDb API, view movie details, rate film
   - `useMovies`
   - `useKey`
   - `useLocalStorageState`
+  - `useDebounce`
 
 ---
 
@@ -78,6 +79,7 @@ src/
       EmptyState.tsx
       ErrorMessage.tsx
       Loader.tsx
+      MovieListSkeleton.tsx
       Pagination.tsx
       Poster.tsx
       StarRating.tsx
@@ -108,6 +110,7 @@ src/
       _index.scss
       _lists.scss
       _pagination.scss
+      _skeleton.scss
       _states.scss
       _summary.scss
     layout/

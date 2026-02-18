@@ -21,6 +21,14 @@
     background: rgba(255, 255, 255, 0.02);
 
     transition: all 0.25s ease;
+
+    will-change: transform;
+
+    &:selected {
+      border-color: rgba(103, 65, 217, 0.6);
+      background: rgba(103, 65, 217, 0.12);
+      box-shadow: 0 10px 22px rgba(103, 65, 217, 0.18);
+    }
   }
 
   img {
@@ -51,16 +59,6 @@
   }
 }
 
-.list li.selected {
-  border-color: rgba(103, 65, 217, 0.6);
-  background: rgba(103, 65, 217, 0.12);
-  box-shadow: 0 10px 22px rgba(103, 65, 217, 0.18);
-}
-
-.list li {
-  will-change: transform;
-}
-
 .list.list-movies li {
   cursor: pointer;
 
@@ -81,5 +79,60 @@
 }
 
 .list li:hover .btn-delete {
+  opacity: 1;
+}
+
+.list-movies .movie-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  width: 100%;
+}
+
+.list-movies .movie-meta div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.movie-meta > div:last-child {
+  flex-shrink: 0;
+}
+
+.movie-meta h3 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.movie-meta p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.badge {
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  line-height: 1;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  white-space: nowrap;
+}
+
+.badge--watched {
+  background: rgba(46, 204, 113, 0.12);
+  color: rgba(46, 204, 113, 0.95);
+}
+
+.list-movies li.watched {
+  opacity: 0.92;
+}
+
+.list-movies li.watched:hover {
   opacity: 1;
 }

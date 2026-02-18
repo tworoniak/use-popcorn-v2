@@ -1,0 +1,60 @@
+.skeleton-row {
+  display: grid;
+  grid-template-columns: 4rem 1fr;
+  column-gap: 2.4rem;
+  padding: 1.6rem 3.2rem;
+  border-bottom: 1px solid var(--color-background-100);
+}
+
+.skeleton-poster {
+  width: 4rem;
+  height: 6rem;
+  border-radius: 0.4rem;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.skeleton-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.skeleton-line {
+  height: 1.2rem;
+  border-radius: 0.4rem;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  position: relative;
+}
+
+.skeleton-line--title {
+  width: 70%;
+  height: 1.6rem;
+}
+
+.skeleton-line--meta {
+  width: 35%;
+}
+
+.skeleton-poster::after,
+.skeleton-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.12),
+    transparent
+  );
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
