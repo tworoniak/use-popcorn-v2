@@ -34,6 +34,16 @@ It allows users to search movies via the OMDb API, view movie details, rate film
 
 ---
 
+## 🚀 Possible Improvements / Next Steps
+
+- Pagination for OMDb search results
+- Sorting watched list by rating, runtime, year, etc.
+- Better accessibility (focus management, aria attributes)
+- Add unit tests (Vitest + React Testing Library)
+- Add deployment workflow (Netlify/Vercel)
+
+---
+
 ## 📦 Installation
 
 Clone the repo and install dependencies:

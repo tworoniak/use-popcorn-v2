@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import StarRating from '../StarRating';
+import StarRating from '../ui/StarRating';
 import { useKey } from '../../hooks/useKey';
 import type { WatchedMovie } from '../../data/movies';
 import Loader from '../ui/Loader';
+import Poster from '../ui/Poster';
 
 // Prefer env var, fallback is ok for local dev.
 const OMDB_KEY = import.meta.env.VITE_OMDB_KEY ?? 'f84fc31d';
@@ -136,7 +137,7 @@ export default function MovieDetails({
           &larr;
         </button>
 
-        <img src={movie.Poster} alt={`Poster of ${movie.Title}`} />
+        <Poster src={movie.Poster} alt={`Poster of ${movie.Title}`} />
 
         <div className='details-overview'>
           <h2>{movie.Title}</h2>

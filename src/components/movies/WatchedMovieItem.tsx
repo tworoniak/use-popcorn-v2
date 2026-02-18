@@ -1,4 +1,5 @@
 import type { WatchedMovie } from '../../data/movies';
+import Poster from '../ui/Poster';
 
 type Props = {
   movie: WatchedMovie;
@@ -8,7 +9,7 @@ type Props = {
 export default function WatchedMovieItem({ movie, onDeleteWatched }: Props) {
   return (
     <li>
-      <img src={movie.Poster} alt={`${movie.Title} poster`} />
+      <Poster src={movie.Poster} alt={`${movie.Title} poster`} />
       <h3>{movie.Title}</h3>
       <div>
         <p>

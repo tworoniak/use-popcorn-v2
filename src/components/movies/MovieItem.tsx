@@ -1,4 +1,5 @@
 import type { Movie } from '../../data/movies';
+import Poster from '../ui/Poster';
 
 type MovieItemProps = {
   movie: Movie;
@@ -18,7 +19,7 @@ export default function MovieItem({
       className={isSelected ? 'selected' : ''}
       onClick={() => onSelectMovie(movie.imdbID)}
     >
-      <img src={movie.Poster} alt={`${movie.Title} poster`} />
+      <Poster src={movie.Poster} alt={`${movie.Title} poster`} />
       <h3>{movie.Title}</h3>
       <div>
         <p>
