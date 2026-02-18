@@ -78,6 +78,8 @@ src/
     ui/
       ErrorMessage.tsx
       Loader.tsx
+      Pagination.tsx
+      Poster.tsx
       StarRating.tsx
 
   data/
@@ -104,6 +106,7 @@ src/
       _details.scss
       _index.scss
       _lists.scss
+      _pagination.scss
       _states.scss
       _summary.scss
     layout/
