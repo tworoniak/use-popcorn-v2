@@ -117,6 +117,7 @@ export default function MovieDetails({
       runtime: parseRuntime(movie.Runtime),
       userRating,
       countRatingDecisions: countRef.current,
+      createdAt: Date.now(),
     };
 
     onAddWatched(newWatchedMovie);
