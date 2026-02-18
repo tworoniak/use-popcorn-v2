@@ -2,7 +2,6 @@ import { useState } from 'react';
 
 import { useLocalStorageState } from './hooks/useLocalStorageState';
 import { useMovies } from './hooks/useMovies';
-
 import type { WatchedMovie } from './data/movies';
 
 import NavBar from './components/layout/NavBar';
@@ -16,21 +15,33 @@ import WatchedSummary from './components/movies/WatchedSummary';
 import WatchedList from './components/movies/WatchedList';
 import MovieDetails from './components/movies/MovieDetails';
 
-// import StarRating from './components/StarRating';
 import Loader from './components/ui/Loader';
 import ErrorMessage from './components/ui/ErrorMessage';
+import Pagination from './components/ui/Pagination';
 import Footer from './components/layout/Footer';
 
 export default function App() {
-  const [query, setQuery] = useState<string>('');
+  const [query, setQuery] = useState('');
+  const [page, setPage] = useState(1);
+
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const { movies, isLoading, error } = useMovies(query);
+  const { movies, isLoading, error, totalResults } = useMovies(query, page);
 
   const [watched, setWatched] = useLocalStorageState<WatchedMovie[]>(
     [],
     'watched',
   );
+
+  function handleSetQuery(nextQuery: string) {
+    setQuery((prev) => {
+      const normalizedPrev = prev.trim();
+      const normalizedNext = nextQuery.trim();
+
+      if (normalizedPrev !== normalizedNext) setPage(1);
+      return nextQuery;
+    });
+  }
 
   function handleSelectMovie(id: string) {
     setSelectedId((current) => (id === current ? null : id));
@@ -48,23 +59,44 @@ export default function App() {
     setWatched((prev) => prev.filter((movie) => movie.imdbID !== id));
   }
 
+  function handlePrevPage() {
+    setPage((p) => Math.max(1, p - 1));
+    setSelectedId(null); // optional UX: close details when paging
+  }
+
+  function handleNextPage() {
+    setPage((p) => p + 1);
+    setSelectedId(null); // optional UX: close details when paging
+  }
+
   return (
     <>
       <NavBar>
-        <Search query={query} onSetQuery={setQuery} />
+        <Search query={query} onSetQuery={handleSetQuery} />
         <NumResults movies={movies} />
       </NavBar>
 
       <Main>
         <Box>
           {isLoading && <Loader />}
+
           {!isLoading && !error && (
-            <MovieList
-              movies={movies}
-              selectedId={selectedId}
-              onSelectMovie={handleSelectMovie}
-            />
+            <>
+              <MovieList
+                movies={movies}
+                onSelectMovie={handleSelectMovie}
+                selectedId={selectedId}
+              />
+
+              <Pagination
+                page={page}
+                totalResults={totalResults}
+                onPrev={handlePrevPage}
+                onNext={handleNextPage}
+              />
+            </>
           )}
+
           {error && <ErrorMessage message={error} />}
         </Box>
 
@@ -87,6 +119,7 @@ export default function App() {
           )}
         </Box>
       </Main>
+
       <Footer />
     </>
   );
