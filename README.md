@@ -84,6 +84,7 @@ src/
       Pagination.tsx
       Poster.tsx
       StarRating.tsx
+      ThemeToggle.tsx
 
   data/
     movies.ts
@@ -93,6 +94,7 @@ src/
     useKey.ts
     useLocalStorageState.ts
     useMovies.ts
+    useTheme.ts
 
   styles/
     abstracts/
@@ -124,6 +126,7 @@ src/
     theme/
       _dark.scss
       _index.scss
+      _light.scss
       _theme.scss
     main.scss
 

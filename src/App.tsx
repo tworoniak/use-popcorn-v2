@@ -3,6 +3,7 @@ import { useDebounce } from './hooks/useDebounce';
 import { useLocalStorageState } from './hooks/useLocalStorageState';
 import { useMovies } from './hooks/useMovies';
 import { useKey } from './hooks/useKey';
+import { useTheme } from './hooks/useTheme';
 
 import type { WatchedMovie } from './data/movies';
 
@@ -25,6 +26,7 @@ import WatchedControls, {
   type WatchedSort,
   type WatchedFilter,
 } from './components/movies/WatchedControls';
+import ThemeToggle from './components/ui/ThemeToggle';
 
 export default function App() {
   const [query, setQuery] = useState('');
@@ -48,6 +50,8 @@ export default function App() {
   const [watchedSort, setWatchedSort] = useState<WatchedSort>('date-desc');
   const [watchedFilter, setWatchedFilter] = useState<WatchedFilter>('all');
   const [watchedQuery, setWatchedQuery] = useState('');
+
+  const { theme, toggleTheme } = useTheme('dark');
 
   useKey('Slash', () => {
     document.getElementById('search')?.focus();
@@ -175,11 +179,6 @@ export default function App() {
     setWatchedQuery('');
   }
 
-  // const watchedVisible = sortWatched(
-  //   filterWatched(watched, watchedFilter),
-  //   watchedSort,
-  // );
-
   return (
     <>
       <Header>
@@ -190,6 +189,7 @@ export default function App() {
             page={page}
             currentCount={movies.length}
           />
+          <ThemeToggle theme={theme} onToggle={toggleTheme} />
         </NavBar>
       </Header>
 

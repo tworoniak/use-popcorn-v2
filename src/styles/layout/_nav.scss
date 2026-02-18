@@ -9,13 +9,31 @@
   height: auto;
   background-color: var(--color-primary);
   border-radius: 0.9rem;
+  position: relative;
+
+  & > :nth-child(4) {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+  }
 
   @include respond($bp-lg) {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr min-content;
     align-items: center;
     height: 7.2rem;
     padding: 0 3.2rem;
+
+    & > :nth-child(4) {
+      position: relative;
+      top: auto;
+      right: auto;
+    }
   }
+}
+
+.nav-bar > :nth-child(3),
+.nav-bar > :nth-child(4) {
+  align-self: center;
 }
 
 // *******
