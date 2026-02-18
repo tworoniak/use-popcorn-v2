@@ -72,6 +72,7 @@ src/
       MovieList.tsx
       NumResults.tsx
       Search.tsx
+      WatchedControls.tsx
       WatchedList.tsx
       WatchedMovieItem.tsx
       WatchedSummary.tsx
@@ -113,6 +114,7 @@ src/
       _skeleton.scss
       _states.scss
       _summary.scss
+      _watched-controls.scss
     layout/
       _footer.scss
       _header.scss
