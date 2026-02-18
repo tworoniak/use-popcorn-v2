@@ -36,7 +36,6 @@ It allows users to search movies via the OMDb API, view movie details, rate film
 
 ## 🚀 Possible Improvements / Next Steps
 
-- Pagination for OMDb search results
 - Sorting watched list by rating, runtime, year, etc.
 - Better accessibility (focus management, aria attributes)
 - Add unit tests (Vitest + React Testing Library)
@@ -76,6 +75,7 @@ src/
       WatchedMovieItem.tsx
       WatchedSummary.tsx
     ui/
+      EmptyState.tsx
       ErrorMessage.tsx
       Loader.tsx
       Pagination.tsx
@@ -86,6 +86,7 @@ src/
     movies.ts
 
   hooks/
+    useDebounce.ts
     useKey.ts
     useLocalStorageState.ts
     useMovies.ts

@@ -13,3 +13,21 @@
   font-size: 2rem;
   padding: 4.8rem;
 }
+
+.empty {
+  padding: 3.2rem 2.4rem;
+  text-align: center;
+  opacity: 0.95;
+}
+
+.empty__title {
+  font-size: 1.8rem;
+  margin: 0 0 0.8rem;
+}
+
+.empty__desc {
+  font-size: 1.4rem;
+  margin: 0;
+  color: var(--color-text-dark);
+  line-height: 1.4;
+}
