@@ -19,6 +19,7 @@ import MovieDetails from './components/movies/MovieDetails';
 // import StarRating from './components/StarRating';
 import Loader from './components/ui/Loader';
 import ErrorMessage from './components/ui/ErrorMessage';
+import Footer from './components/layout/Footer';
 
 export default function App() {
   const [query, setQuery] = useState<string>('');
@@ -86,6 +87,7 @@ export default function App() {
           )}
         </Box>
       </Main>
+      <Footer />
     </>
   );
 }

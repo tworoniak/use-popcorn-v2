@@ -1,0 +1,9 @@
+@use '../abstracts' as *;
+
+.main {
+  margin-top: $spacing-24;
+  height: calc(100vh - 7.2rem - 3 * $spacing-24);
+  display: flex;
+  gap: $spacing-24;
+  justify-content: center;
+}

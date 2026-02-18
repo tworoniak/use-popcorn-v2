@@ -1,0 +1,11 @@
+@use '../abstracts' as *;
+
+footer {
+  @include flex-center;
+  margin: $spacing-lg 0;
+  padding: $spacing-md 0;
+
+  p {
+    font-size: $font-size-12;
+  }
+}
