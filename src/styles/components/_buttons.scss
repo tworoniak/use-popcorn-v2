@@ -1,4 +1,7 @@
+@use '../abstracts' as *;
+
 .btn-toggle {
+  @include flex-center;
   position: absolute;
   top: 0.8rem;
   right: 2rem;
@@ -62,7 +65,7 @@
   width: 2.6rem;
 
   border-radius: 50%;
-  border: none;
+  border: 1px solid var(--color-red);
 
   background: rgba(250, 82, 82, 0.15);
   color: var(--color-red);

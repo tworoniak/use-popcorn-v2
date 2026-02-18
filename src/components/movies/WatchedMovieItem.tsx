@@ -1,5 +1,6 @@
 import type { WatchedMovie } from '../../data/movies';
 import Poster from '../ui/Poster';
+import { Trash2 } from 'lucide-react';
 
 type Props = {
   movie: WatchedMovie;
@@ -30,7 +31,7 @@ export default function WatchedMovieItem({ movie, onDeleteWatched }: Props) {
         className='btn-delete'
         onClick={() => onDeleteWatched(movie.imdbID)}
       >
-        ✖
+        <Trash2 size={16} />
       </button>
     </li>
   );

@@ -1,5 +1,6 @@
 // Box.tsx
 import { useState, type ReactNode } from 'react';
+import { Plus, Minus } from 'lucide-react';
 
 type BoxProps = {
   children: ReactNode;
@@ -16,7 +17,11 @@ export default function Box({ children }: BoxProps) {
         onClick={() => setIsOpen((open) => !open)}
         aria-expanded={isOpen}
       >
-        {isOpen ? '–' : '+'}
+        {isOpen ? (
+          <Minus size={20} strokeWidth={1.5} />
+        ) : (
+          <Plus size={20} strokeWidth={1.5} />
+        )}
       </button>
 
       {isOpen && (

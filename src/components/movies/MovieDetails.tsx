@@ -4,6 +4,7 @@ import { useKey } from '../../hooks/useKey';
 import type { WatchedMovie } from '../../data/movies';
 import Loader from '../ui/Loader';
 import Poster from '../ui/Poster';
+import { ArrowLeft } from 'lucide-react';
 
 // Prefer env var, fallback is ok for local dev.
 const OMDB_KEY = import.meta.env.VITE_OMDB_KEY ?? 'f84fc31d';
@@ -134,7 +135,7 @@ export default function MovieDetails({
     <div className='details'>
       <header>
         <button className='btn-back' onClick={onCloseMovie}>
-          &larr;
+          <ArrowLeft size={24} />
         </button>
 
         <Poster src={movie.Poster} alt={`Poster of ${movie.Title}`} />
