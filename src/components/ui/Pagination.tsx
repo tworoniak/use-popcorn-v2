@@ -1,3 +1,5 @@
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+
 type PaginationProps = {
   page: number;
   totalResults: number;
@@ -22,7 +24,8 @@ export default function Pagination({
   return (
     <div className='pagination'>
       <button className='btn-page' onClick={onPrev} disabled={isFirst}>
-        ← Prev
+        <ArrowLeft size={16} />
+        Prev
       </button>
 
       <span className='page-info'>
@@ -30,7 +33,7 @@ export default function Pagination({
       </span>
 
       <button className='btn-page' onClick={onNext} disabled={isLast}>
-        Next →
+        Next <ArrowRight size={16} />
       </button>
     </div>
   );
