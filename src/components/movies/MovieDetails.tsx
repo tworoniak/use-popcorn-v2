@@ -100,7 +100,7 @@ export default function MovieDetails({
     if (!movie?.Title) return;
     document.title = `Movie | ${movie.Title}`;
     return () => {
-      document.title = 'usePopcorn';
+      document.title = 'usePopcorn v2.0';
     };
   }, [movie?.Title]);
 
