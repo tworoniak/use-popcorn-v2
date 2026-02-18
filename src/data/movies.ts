@@ -10,6 +10,7 @@ export type WatchedMovie = Movie & {
   imdbRating: number;
   userRating: number;
   countRatingDecisions?: number;
+  createdAt?: number;
 };
 
 export const tempMovieData: Movie[] = [

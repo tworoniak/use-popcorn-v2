@@ -21,6 +21,10 @@ import Pagination from './components/ui/Pagination';
 import Footer from './components/layout/Footer';
 import EmptyState from './components/ui/EmptyState';
 import MovieListSkeleton from './components/ui/MovieListSkeleton';
+import WatchedControls, {
+  type WatchedSort,
+  type WatchedFilter,
+} from './components/movies/WatchedControls';
 
 export default function App() {
   const [query, setQuery] = useState('');
@@ -41,6 +45,8 @@ export default function App() {
   );
 
   const watchedIds = new Set(watched.map((m) => m.imdbID));
+  const [watchedSort, setWatchedSort] = useState<WatchedSort>('date-desc');
+  const [watchedFilter, setWatchedFilter] = useState<WatchedFilter>('all');
 
   useKey('Slash', () => {
     document.getElementById('search')?.focus();
@@ -97,6 +103,62 @@ export default function App() {
     setSelectedId(null); // optional UX: close details when paging
     scrollMoviesToTop();
   }
+
+  function compareString(a: string, b: string) {
+    return a.localeCompare(b, undefined, { sensitivity: 'base' });
+  }
+
+  function sortWatched(list: WatchedMovie[], sort: WatchedSort) {
+    const copy = [...list];
+
+    const getCreatedAt = (m: WatchedMovie) => m.createdAt ?? 0;
+
+    switch (sort) {
+      case 'date-desc':
+        return copy.sort((a, b) => getCreatedAt(b) - getCreatedAt(a));
+      case 'date-asc':
+        return copy.sort((a, b) => getCreatedAt(a) - getCreatedAt(b));
+
+      case 'userRating-desc':
+        return copy.sort((a, b) => (b.userRating ?? 0) - (a.userRating ?? 0));
+      case 'userRating-asc':
+        return copy.sort((a, b) => (a.userRating ?? 0) - (b.userRating ?? 0));
+
+      case 'imdbRating-desc':
+        return copy.sort((a, b) => (b.imdbRating ?? 0) - (a.imdbRating ?? 0));
+      case 'imdbRating-asc':
+        return copy.sort((a, b) => (a.imdbRating ?? 0) - (b.imdbRating ?? 0));
+
+      case 'runtime-desc':
+        return copy.sort((a, b) => (b.runtime ?? 0) - (a.runtime ?? 0));
+      case 'runtime-asc':
+        return copy.sort((a, b) => (a.runtime ?? 0) - (b.runtime ?? 0));
+
+      case 'title-asc':
+        return copy.sort((a, b) => compareString(a.Title, b.Title));
+      case 'title-desc':
+        return copy.sort((a, b) => compareString(b.Title, a.Title));
+
+      default:
+        return copy;
+    }
+  }
+
+  function filterWatched(list: WatchedMovie[], filter: WatchedFilter) {
+    switch (filter) {
+      case 'rated':
+        return list.filter((m) => (m.userRating ?? 0) > 0);
+      case 'unrated':
+        return list.filter((m) => (m.userRating ?? 0) === 0);
+      default:
+        return list;
+    }
+  }
+
+  const watchedVisible = sortWatched(
+    filterWatched(watched, watchedFilter),
+    watchedSort,
+  );
 
   return (
     <>
@@ -171,9 +233,19 @@ export default function App() {
             />
           ) : (
             <>
-              <WatchedSummary watched={watched} />
+              <WatchedSummary watched={watchedVisible} />
+
+              {watched.length > 0 && (
+                <WatchedControls
+                  sort={watchedSort}
+                  onSortChange={setWatchedSort}
+                  filter={watchedFilter}
+                  onFilterChange={setWatchedFilter}
+                />
+              )}
+
               <WatchedList
-                watched={watched}
+                watched={watchedVisible}
                 onDeleteWatched={handleDeleteWatched}
               />
             </>
