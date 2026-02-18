@@ -101,3 +101,27 @@
   color: #fff;
   transform: translateY(-50%) scale(1.05);
 }
+
+.btn-theme {
+  justify-self: end;
+  border: none;
+  background: rgba(0, 0, 0, 0.18);
+  color: #fff;
+  border-radius: 999px;
+  height: 3.6rem;
+  width: 3.6rem;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-theme:hover {
+  transform: translateY(-1px);
+  background: rgba(0, 0, 0, 0.26);
+}
+
+.btn-theme:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
+}
