@@ -61,6 +61,8 @@ src/
   components/
     layout/
       Box.tsx
+      Footer.tsx
+      Header.tsx
       Logo.tsx
       Main.tsx
       NavBar.tsx
@@ -95,6 +97,20 @@ src/
       _base.scss
       _index.scss
       _reset.scss
+      _typography.scss
+    components/
+      _box.scss
+      _buttons.scss
+      _details.scss
+      _index.scss
+      _lists.scss
+      _states.scss
+      _summary.scss
+    layout/
+      _footer.scss
+      _index.scss
+      _main.scss
+      _nav.scss
     theme/
       _dark.scss
       _index.scss
