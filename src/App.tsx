@@ -47,6 +47,7 @@ export default function App() {
   const watchedIds = new Set(watched.map((m) => m.imdbID));
   const [watchedSort, setWatchedSort] = useState<WatchedSort>('date-desc');
   const [watchedFilter, setWatchedFilter] = useState<WatchedFilter>('all');
+  const [watchedQuery, setWatchedQuery] = useState('');
 
   useKey('Slash', () => {
     document.getElementById('search')?.focus();
@@ -144,6 +145,13 @@ export default function App() {
     }
   }
 
+  function filterWatchedByTitle(list: WatchedMovie[], q: string) {
+    const query = q.trim().toLowerCase();
+    if (!query) return list;
+
+    return list.filter((m) => m.Title.toLowerCase().includes(query));
+  }
+
   function filterWatched(list: WatchedMovie[], filter: WatchedFilter) {
     switch (filter) {
       case 'rated':
@@ -155,10 +163,22 @@ export default function App() {
     }
   }
 
-  const watchedVisible = sortWatched(
-    filterWatched(watched, watchedFilter),
-    watchedSort,
+  const watchedFiltered = filterWatched(watched, watchedFilter);
+  const watchedTitleFiltered = filterWatchedByTitle(
+    watchedFiltered,
+    watchedQuery,
   );
+  const watchedVisible = sortWatched(watchedTitleFiltered, watchedSort);
+
+  function handleFilterChange(next: WatchedFilter) {
+    setWatchedFilter(next);
+    setWatchedQuery('');
+  }
+
+  // const watchedVisible = sortWatched(
+  //   filterWatched(watched, watchedFilter),
+  //   watchedSort,
+  // );
 
   return (
     <>
@@ -240,7 +260,9 @@ export default function App() {
                   sort={watchedSort}
                   onSortChange={setWatchedSort}
                   filter={watchedFilter}
-                  onFilterChange={setWatchedFilter}
+                  onFilterChange={handleFilterChange}
+                  watchedQuery={watchedQuery}
+                  onWatchedQueryChange={setWatchedQuery}
                 />
               )}
 
