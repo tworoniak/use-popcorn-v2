@@ -6,6 +6,7 @@ import { useKey } from './hooks/useKey';
 
 import type { WatchedMovie } from './data/movies';
 
+import Header from './components/layout/Header';
 import NavBar from './components/layout/NavBar';
 import Main from './components/layout/Main';
 import Box from './components/layout/Box';
@@ -99,14 +100,16 @@ export default function App() {
 
   return (
     <>
-      <NavBar>
-        <Search query={query} onSetQuery={handleSetQuery} />
-        <NumResults
-          totalResults={totalResults}
-          page={page}
-          currentCount={movies.length}
-        />
-      </NavBar>
+      <Header>
+        <NavBar>
+          <Search query={query} onSetQuery={handleSetQuery} />
+          <NumResults
+            totalResults={totalResults}
+            page={page}
+            currentCount={movies.length}
+          />
+        </NavBar>
+      </Header>
 
       <Main>
         <Box scrollId='movies-scroll'>

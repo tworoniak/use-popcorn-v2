@@ -3,8 +3,9 @@
 .btn-toggle {
   @include flex-center;
   position: absolute;
-  top: 0.8rem;
-  right: 2rem;
+  top: 1.2rem;
+  right: 1.2rem;
+  opacity: 0.8;
   height: 2.4rem;
   aspect-ratio: 1;
   border-radius: 50%;
@@ -15,6 +16,16 @@
   font-weight: bold;
   cursor: pointer;
   z-index: 999;
+
+  &:hover {
+    background-color: var(--color-background-800);
+    opacity: 1;
+  }
+
+  @include respond($bp-lg) {
+    top: 0.8rem;
+    right: 2rem;
+  }
 }
 
 .btn-add {

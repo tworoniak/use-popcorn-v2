@@ -115,6 +115,7 @@ src/
       _summary.scss
     layout/
       _footer.scss
+      _header.scss
       _index.scss
       _main.scss
       _nav.scss
