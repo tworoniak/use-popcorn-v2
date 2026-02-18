@@ -1,1 +1,100 @@
 # React + TypeScript + Vite + Sass
+
+# usePopcorn v2.0 🍿
+
+**usePopcorn v2.0** is a React + TypeScript movie tracking application built with Vite.  
+It allows users to search movies via the OMDb API, view movie details, rate films, and manage a persistent watched list stored in `localStorage`.
+
+---
+
+## ✨ Features
+
+- 🔍 Search movies using the **OMDb API**
+- 🎬 View detailed movie information (plot, cast, runtime, genre, etc.)
+- ⭐ Rate movies with a custom **StarRating** component
+- ➕ Add movies to a watched list
+- ❌ Remove movies from the watched list
+- 💾 Watched list persists using `localStorage`
+- ⌨️ Keyboard support (`Escape` closes movie details)
+- 🎨 Styled with **Sass (SCSS)** using a modular architecture
+
+---
+
+## 🛠 Tech Stack
+
+- **React**
+- **TypeScript**
+- **Vite**
+- **Sass (SCSS)**
+- **OMDb API**
+- Custom Hooks:
+  - `useMovies`
+  - `useKey`
+  - `useLocalStorageState`
+
+---
+
+## 📦 Installation
+
+Clone the repo and install dependencies:
+
+```bash
+git clone <your-repo-url>
+cd use-popcorn-v2
+npm install
+
+```
+
+```txt
+
+src/
+  components/
+    layout/
+      Box.tsx
+      Logo.tsx
+      Main.tsx
+      NavBar.tsx
+    movies/
+      MovieDetails.tsx
+      MovieItem.tsx
+      MovieList.tsx
+      NumResults.tsx
+      Search.tsx
+      WatchedList.tsx
+      WatchedMovieItem.tsx
+      WatchedSummary.tsx
+    ui/
+      ErrorMessage.tsx
+      Loader.tsx
+      StarRating.tsx
+
+  data/
+    movies.ts
+
+  hooks/
+    useKey.ts
+    useLocalStorageState.ts
+    useMovies.ts
+
+  styles/
+    abstracts/
+      _index.scss
+      _mixins.scss
+      _variables.scss
+    base/
+      _base.scss
+      _index.scss
+      _reset.scss
+    theme/
+      _dark.scss
+      _index.scss
+      _theme.scss
+    main.scss
+
+  utils/
+    average.ts
+
+  App.tsx
+  main.tsx
+
+```

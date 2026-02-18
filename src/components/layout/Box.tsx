@@ -1,3 +1,4 @@
+// Box.tsx
 import { useState, type ReactNode } from 'react';
 
 type BoxProps = {
@@ -9,10 +10,20 @@ export default function Box({ children }: BoxProps) {
 
   return (
     <div className='box'>
-      <button className='btn-toggle' onClick={() => setIsOpen((open) => !open)}>
+      <button
+        type='button'
+        className='btn-toggle'
+        onClick={() => setIsOpen((open) => !open)}
+        aria-expanded={isOpen}
+      >
         {isOpen ? '–' : '+'}
       </button>
-      {isOpen && children}
+
+      {isOpen && (
+        <div className='box__scroll scroll-area' tabIndex={0}>
+          {children}
+        </div>
+      )}
     </div>
   );
 }
