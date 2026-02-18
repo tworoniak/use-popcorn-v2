@@ -1,8 +1,8 @@
 @use '../abstracts' as *;
 
 .box {
-  width: 50%;
-  max-width: 50%;
+  width: 100%;
+  max-width: 100%;
   background-color: var(--color-background-500);
   border-radius: 0.9rem;
   position: relative;
@@ -15,6 +15,11 @@
 
   // IMPORTANT: no scrolling here
   overflow: hidden;
+
+  @include respond($bp-lg) {
+    width: 50%;
+    max-width: 50%;
+  }
 }
 
 .box__scroll {

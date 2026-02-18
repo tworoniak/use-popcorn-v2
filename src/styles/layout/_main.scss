@@ -2,8 +2,14 @@
 
 .main {
   margin-top: $spacing-24;
-  height: calc(100vh - 7.2rem - 3 * $spacing-24);
+  height: auto;
   display: flex;
+  flex-direction: column;
   gap: $spacing-24;
   justify-content: center;
+
+  @include respond($bp-lg) {
+    flex-direction: row;
+    height: calc(100vh - 7.2rem - 3 * $spacing-24);
+  }
 }
