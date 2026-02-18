@@ -1,0 +1,125 @@
+@use '../abstracts' as *;
+
+.box {
+  width: 50%;
+  max-width: 50%;
+  background-color: var(--color-background-500);
+  border-radius: 0.9rem;
+  position: relative;
+
+  // nice “panel” feel
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  // IMPORTANT: no scrolling here
+  overflow: hidden;
+}
+
+.box__scroll {
+  height: 100%;
+  max-height: calc(100vh - 7.2rem - 3 * $spacing-24);
+  overflow: auto;
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  // give content breathing room from scrollbar
+  padding-right: 0.25rem;
+}
+
+.scroll-area {
+  overflow: auto;
+  overscroll-behavior: contain;
+
+  // makes it feel like macOS overlay scrollbars
+  scrollbar-gutter: auto;
+
+  // Firefox (still limited, but we can make it subtle)
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+
+  // Chrome / Edge / Safari
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 999px;
+    transition: background 0.25s ease;
+  }
+
+  // Reveal scrollbar only on hover/focus
+  &:hover,
+  &:focus-within {
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.35);
+    }
+  }
+}
+
+.scroll-area {
+  scroll-behavior: smooth;
+}
+
+.scroll-area::-webkit-scrollbar-thumb {
+  opacity: 0;
+}
+
+.scroll-area:hover::-webkit-scrollbar-thumb,
+.scroll-area:focus-within::-webkit-scrollbar-thumb {
+  opacity: 1;
+}
+
+.box__scroll {
+  padding-right: 0.75rem;
+}
+
+.box__scroll {
+  position: relative;
+}
+
+.box__scroll::before,
+.box__scroll::after {
+  content: '';
+  position: sticky;
+  left: 0;
+  right: 0;
+  height: 18px;
+  pointer-events: none;
+  display: block;
+  z-index: 2;
+}
+
+.box__scroll::before {
+  top: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--color-background-500),
+    rgba(0, 0, 0, 0)
+  );
+}
+
+.box__scroll::after {
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    var(--color-background-500),
+    rgba(0, 0, 0, 0)
+  );
+}
+
+.box__scroll .list li {
+  padding-right: 2.4rem; // prevents delete button crowding scrollbar
+}
