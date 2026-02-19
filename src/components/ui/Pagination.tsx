@@ -6,6 +6,7 @@ type PaginationProps = {
   pageSize?: number; // OMDb is 10, but keep flexible
   onPrev: () => void;
   onNext: () => void;
+  disabled?: boolean;
 };
 
 export default function Pagination({
@@ -14,6 +15,7 @@ export default function Pagination({
   pageSize = 10,
   onPrev,
   onNext,
+  disabled = false,
 }: PaginationProps) {
   if (totalResults <= pageSize) return null;
 
@@ -23,7 +25,11 @@ export default function Pagination({
 
   return (
     <div className='pagination'>
-      <button className='btn-page' onClick={onPrev} disabled={isFirst}>
+      <button
+        className='btn-page'
+        onClick={onPrev}
+        disabled={isFirst || disabled}
+      >
         <ArrowLeft size={16} />
         Prev
       </button>
@@ -32,7 +38,11 @@ export default function Pagination({
         Page <strong>{page}</strong> of <strong>{totalPages}</strong>
       </span>
 
-      <button className='btn-page' onClick={onNext} disabled={isLast}>
+      <button
+        className='btn-page'
+        onClick={onNext}
+        disabled={isLast || disabled}
+      >
         Next <ArrowRight size={16} />
       </button>
     </div>

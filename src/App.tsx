@@ -4,6 +4,8 @@ import { useLocalStorageState } from './hooks/useLocalStorageState';
 import { useMovies } from './hooks/useMovies';
 import { useKey } from './hooks/useKey';
 import { useTheme } from './hooks/useTheme';
+import { useOnlineStatus } from './hooks/useOnlineStatus';
+import { useToast } from './hooks/useToast';
 
 import type { WatchedMovie } from './data/movies';
 
@@ -28,7 +30,7 @@ import WatchedControls, {
 } from './components/movies/WatchedControls';
 import ThemeToggle from './components/ui/ThemeToggle';
 import Toast from './components/ui/Toast';
-import { useToast } from './hooks/useToast';
+import NetworkBanner from './components/ui/NetworkBanner';
 
 export default function App() {
   const [query, setQuery] = useState('');
@@ -54,6 +56,7 @@ export default function App() {
   const [watchedQuery, setWatchedQuery] = useState('');
 
   const { theme, toggleTheme } = useTheme('dark');
+  const isOnline = useOnlineStatus();
 
   const {
     toast,
@@ -260,6 +263,8 @@ export default function App() {
 
       <Main>
         <Box scrollId='movies-scroll'>
+          <NetworkBanner isOnline={isOnline} />
+
           {query.trim().length < 3 && (
             <EmptyState
               title='Search for a movie'
@@ -272,7 +277,10 @@ export default function App() {
           )}
 
           {!isLoading && error && (
-            <ErrorMessage message={error} onRetry={retry} />
+            <ErrorMessage
+              message={error}
+              onRetry={isOnline ? retry : undefined}
+            />
           )}
 
           {query.trim().length >= 3 &&
