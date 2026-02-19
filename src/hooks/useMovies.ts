@@ -16,23 +16,36 @@ type OmdbSearchError = {
 
 type OmdbSearchResponse = OmdbSearchSuccess | OmdbSearchError;
 
+type CacheEntry = {
+  movies: Movie[];
+  totalResults: number;
+  ts: number;
+};
+
+// ✅ module-level cache (persists while the page is open)
+const searchCache = new Map<string, CacheEntry>();
+
+function makeKey(query: string, page: number) {
+  return `${query.toLowerCase()}::${page}`;
+}
+
 export function useMovies(query: string, page: number) {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [totalResults, setTotalResults] = useState<number>(0);
+  const [totalResults, setTotalResults] = useState(0);
 
-  const [isLoading, setIsLoading] = useState(false); // initial load (no data yet)
-  const [isFetching, setIsFetching] = useState(false); // background fetch (keep old data)
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState('');
 
   const [retryKey, setRetryKey] = useState(0);
   function retry() {
+    // retry bypasses cache by changing retryKey
     setRetryKey((k) => k + 1);
   }
 
   useEffect(() => {
     const q = query.trim();
 
-    // guard: too short => reset
     if (q.length < 3) {
       setMovies([]);
       setTotalResults(0);
@@ -42,15 +55,46 @@ export function useMovies(query: string, page: number) {
       return;
     }
 
+    const key = makeKey(q, page);
+
+    // ✅ 1) Serve from cache immediately (instant UI)
+    // Only do this for normal runs, not explicit retry
+    if (retryKey === 0) {
+      const cached = searchCache.get(key);
+      if (cached) {
+        setMovies(cached.movies);
+        setTotalResults(cached.totalResults);
+        setError('');
+        setIsLoading(false);
+        setIsFetching(false);
+        return;
+      }
+    }
+
+    const MAX_CACHE_ENTRIES = 50;
+
+    function pruneCache() {
+      if (searchCache.size <= MAX_CACHE_ENTRIES) return;
+
+      // remove oldest entries
+      const entries = Array.from(searchCache.entries()).sort(
+        (a, b) => a[1].ts - b[1].ts,
+      );
+      const removeCount = searchCache.size - MAX_CACHE_ENTRIES;
+
+      for (let i = 0; i < removeCount; i++) {
+        searchCache.delete(entries[i][0]);
+      }
+    }
+
     const controller = new AbortController();
 
     async function fetchMovies() {
-      const hasData = movies.length > 0;
-
       try {
         setError('');
 
-        // If we already have results, treat new request as background fetching
+        // Keep old results visible while fetching new ones
+        const hasData = movies.length > 0;
         if (!hasData) setIsLoading(true);
         else setIsFetching(true);
 
@@ -69,14 +113,24 @@ export function useMovies(query: string, page: number) {
           throw new Error(data.Error || 'Movie not found');
         }
 
-        setMovies(data.Search ?? []);
-        setTotalResults(Number(data.totalResults) || 0);
+        const nextMovies = data.Search ?? [];
+        const nextTotal = Number(data.totalResults) || 0;
+
+        setMovies(nextMovies);
+        setTotalResults(nextTotal);
+
+        // ✅ 2) Write to cache
+        searchCache.set(key, {
+          movies: nextMovies,
+          totalResults: nextTotal,
+          ts: Date.now(),
+        });
+        pruneCache();
       } catch (err: unknown) {
         if (err instanceof DOMException && err.name === 'AbortError') return;
 
         const message =
           err instanceof Error ? err.message : 'Unknown error occurred';
-
         setError(message);
       } finally {
         setIsLoading(false);
@@ -87,7 +141,6 @@ export function useMovies(query: string, page: number) {
     fetchMovies();
 
     return () => controller.abort();
-    // IMPORTANT: include page/query/retryKey
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, page, retryKey]);
 

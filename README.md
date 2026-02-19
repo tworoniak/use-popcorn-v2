@@ -80,6 +80,7 @@ src/
       ErrorMessage.tsx
       Loader.tsx
       MovieListSkeleton.tsx
+      NetworkBanner.tsx
       Pagination.tsx
       Poster.tsx
       StarRating.tsx
@@ -94,6 +95,7 @@ src/
     useKey.ts
     useLocalStorageState.ts
     useMovies.ts
+    useOnlineStatus.ts
     useTheme.ts
     useToast.ts
 
