@@ -1,6 +1,6 @@
 html[data-theme='light'] {
-  --color-primary: #6741d9;
-  --color-primary-light: #7950f2;
+  --color-primary: #a48de8;
+  --color-primary-light: #b3a0ec;
 
   --color-text: #212529;
   --color-text-dark: #495057;
@@ -11,6 +11,7 @@ html[data-theme='light'] {
 
   --color-red: #fa5252;
   --color-red-dark: #e03131;
-
   --color-yellow: #fcc419;
+
+  --color-border: rgba(0, 0, 0, 0.12);
 }
