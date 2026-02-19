@@ -84,6 +84,7 @@ src/
       Poster.tsx
       StarRating.tsx
       ThemeToggle.tsx
+      Toast.tsx
 
   data/
     movies.ts
@@ -94,6 +95,7 @@ src/
     useLocalStorageState.ts
     useMovies.ts
     useTheme.ts
+    useToast.ts
 
   styles/
     abstracts/

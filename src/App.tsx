@@ -27,6 +27,8 @@ import WatchedControls, {
   type WatchedFilter,
 } from './components/movies/WatchedControls';
 import ThemeToggle from './components/ui/ThemeToggle';
+import Toast from './components/ui/Toast';
+import { useToast } from './hooks/useToast';
 
 export default function App() {
   const [query, setQuery] = useState('');
@@ -34,7 +36,7 @@ export default function App() {
 
   const debouncedQuery = useDebounce(query, 400);
 
-  const { movies, isLoading, error, totalResults } = useMovies(
+  const { movies, isLoading, error, totalResults, retry } = useMovies(
     debouncedQuery,
     page,
   );
@@ -52,6 +54,7 @@ export default function App() {
   const [watchedQuery, setWatchedQuery] = useState('');
 
   const { theme, toggleTheme } = useTheme('dark');
+  const { toast, show: showToast, close: closeToast } = useToast();
 
   useKey('Slash', () => {
     document.getElementById('search')?.focus();
@@ -85,11 +88,31 @@ export default function App() {
   }
 
   function handleAddWatched(movie: WatchedMovie) {
-    setWatched((prev) => [...prev, movie]);
+    setWatched((prev) => {
+      const idx = prev.findIndex((m) => m.imdbID === movie.imdbID);
+      if (idx === -1) {
+        showToast('Added to watched', 'success');
+        return [...prev, movie];
+      }
+
+      showToast('Updated your rating', 'info');
+
+      const existing = prev[idx];
+      const updated: WatchedMovie = {
+        ...existing,
+        ...movie,
+        createdAt: existing.createdAt ?? movie.createdAt,
+        updatedAt: Date.now(),
+      };
+      const copy = [...prev];
+      copy[idx] = updated;
+      return copy;
+    });
   }
 
   function handleDeleteWatched(id: string) {
-    setWatched((prev) => prev.filter((movie) => movie.imdbID !== id));
+    setWatched((prev) => prev.filter((m) => m.imdbID !== id));
+    showToast('Removed from watched', 'info');
   }
 
   function scrollMoviesToTop() {
@@ -207,8 +230,12 @@ export default function App() {
             <MovieListSkeleton />
           )}
 
-          {query.trim().length >= 3 && !isLoading && error && (
-            <ErrorMessage message={error} />
+          {/* {query.trim().length >= 3 && !isLoading && error && (
+            <ErrorMessage message={error} onRetry={retry} />
+          )} */}
+
+          {!isLoading && error && (
+            <ErrorMessage message={error} onRetry={retry} />
           )}
 
           {query.trim().length >= 3 &&
@@ -277,6 +304,15 @@ export default function App() {
           )}
         </Box>
       </Main>
+      {toast && (
+        <div className='toast-host'>
+          <Toast
+            message={toast.message}
+            kind={toast.kind}
+            onClose={closeToast}
+          />
+        </div>
+      )}
 
       <Footer />
     </>
