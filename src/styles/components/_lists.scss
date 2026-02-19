@@ -18,7 +18,7 @@
     margin: 0.6rem 1rem;
 
     border-radius: 1.2rem;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--color-border);
 
     background: rgba(255, 255, 255, 0.02);
 
@@ -77,7 +77,7 @@
   &:hover {
     transform: translateY(-2px);
     background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.12);
+    border-color: var(--color-border);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
   }
 
@@ -132,7 +132,7 @@
   padding: 0.3rem 0.7rem;
   border-radius: 999px;
   line-height: 1;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--color-border);
   white-space: nowrap;
 }
 
