@@ -4,6 +4,7 @@ import { useKey } from '../../hooks/useKey';
 import type { WatchedMovie } from '../../data/movies';
 import Loader from '../ui/Loader';
 import Poster from '../ui/Poster';
+import ErrorMessage from '../ui/ErrorMessage';
 import { ArrowLeft } from 'lucide-react';
 
 // Prefer env var, fallback is ok for local dev.
@@ -52,6 +53,12 @@ export default function MovieDetails({
   const [movie, setMovie] = useState<OmdbMovieSuccess | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState<number>(0);
+  const [error, setError] = useState<string>('');
+  const [retryKey, setRetryKey] = useState(0);
+
+  function retry() {
+    setRetryKey((k) => k + 1);
+  }
 
   const countRef = useRef(0);
 
@@ -72,6 +79,7 @@ export default function MovieDetails({
     async function getMovieDetails() {
       try {
         setIsLoading(true);
+        setError('');
 
         const res = await fetch(
           `https://www.omdbapi.com/?apikey=${OMDB_KEY}&i=${selectedId}`,
@@ -87,6 +95,14 @@ export default function MovieDetails({
         }
 
         setMovie(data);
+      } catch (err: unknown) {
+        if (err instanceof DOMException && err.name === 'AbortError') return;
+
+        const message =
+          err instanceof Error ? err.message : 'Unknown error occurred';
+
+        setError(message);
+        setMovie(null);
       } finally {
         setIsLoading(false);
       }
@@ -95,7 +111,7 @@ export default function MovieDetails({
     getMovieDetails();
 
     return () => controller.abort();
-  }, [selectedId]);
+  }, [selectedId, retryKey]);
 
   useEffect(() => {
     if (!movie?.Title) return;
@@ -108,6 +124,8 @@ export default function MovieDetails({
   function handleAdd() {
     if (!movie) return;
 
+    const now = Date.now();
+
     const newWatchedMovie: WatchedMovie = {
       imdbID: selectedId,
       Title: movie.Title,
@@ -117,7 +135,8 @@ export default function MovieDetails({
       runtime: parseRuntime(movie.Runtime),
       userRating,
       countRatingDecisions: countRef.current,
-      createdAt: Date.now(),
+      createdAt: now,
+      updatedAt: now,
     };
 
     onAddWatched(newWatchedMovie);
@@ -130,6 +149,14 @@ export default function MovieDetails({
         <Loader />
       </div>
     );
+
+  if (error)
+    return (
+      <div className='details'>
+        <ErrorMessage message={error} onRetry={retry} />
+      </div>
+    );
+
   if (!movie) return <div className='details' />;
 
   return (

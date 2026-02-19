@@ -31,3 +31,53 @@
   color: var(--color-text-dark);
   line-height: 1.4;
 }
+
+// Toast styles
+.toast-host {
+  position: fixed;
+  left: 50%;
+  bottom: 1.6rem;
+  transform: translateX(-50%);
+  z-index: 9999;
+  width: min(56rem, calc(100% - 2.4rem));
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+
+  padding: 1rem 1.2rem;
+  border-radius: 1.2rem;
+  backdrop-filter: blur(10px);
+
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(20, 20, 20, 0.72);
+  color: var(--color-text);
+}
+
+.toast--success {
+  border-color: rgba(46, 204, 113, 0.35);
+}
+
+.toast--error {
+  border-color: rgba(250, 82, 82, 0.4);
+}
+
+.toast__msg {
+  font-size: 1.4rem;
+}
+
+.toast__btn {
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 2rem;
+  line-height: 1;
+  opacity: 0.8;
+}
+.toast__btn:hover {
+  opacity: 1;
+}
