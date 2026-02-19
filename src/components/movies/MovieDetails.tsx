@@ -200,6 +200,7 @@ export default function MovieDetails({
             size={24}
             rating={userRating}
             onSetRating={setUserRating}
+            label='Your rating'
           />
 
           {!isWatched ? (
