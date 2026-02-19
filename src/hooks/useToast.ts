@@ -2,26 +2,45 @@ import { useCallback, useRef, useState } from 'react';
 
 type ToastKind = 'success' | 'error' | 'info';
 
-export function useToast(timeoutMs = 2200) {
-  const [toast, setToast] = useState<{
-    message: string;
-    kind: ToastKind;
-  } | null>(null);
+type ToastState = {
+  message: string;
+  kind: ToastKind;
+  actionLabel?: string;
+  onAction?: () => void;
+};
+
+export function useToast(timeoutMs = 3000) {
+  const [toast, setToast] = useState<ToastState | null>(null);
   const timerRef = useRef<number | null>(null);
+  const [isClosing, setIsClosing] = useState(false);
 
   const show = useCallback(
-    (message: string, kind: ToastKind = 'info') => {
-      setToast({ message, kind });
+    (next: ToastState) => {
+      setIsClosing(false);
+      setToast(next);
+
       if (timerRef.current) window.clearTimeout(timerRef.current);
-      timerRef.current = window.setTimeout(() => setToast(null), timeoutMs);
+      timerRef.current = window.setTimeout(() => {
+        setIsClosing(true);
+        window.setTimeout(() => {
+          setToast(null);
+          setIsClosing(false);
+        }, 140);
+      }, timeoutMs);
     },
     [timeoutMs],
   );
 
   const close = useCallback(() => {
     if (timerRef.current) window.clearTimeout(timerRef.current);
-    setToast(null);
+
+    setIsClosing(true);
+
+    window.setTimeout(() => {
+      setToast(null);
+      setIsClosing(false);
+    }, 140);
   }, []);
 
-  return { toast, show, close };
+  return { toast, show, close, isClosing };
 }
