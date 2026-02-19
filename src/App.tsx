@@ -133,11 +133,11 @@ export default function App() {
       if (index === -1) return prev;
 
       const movie = prev[index];
-
       const next = prev.filter((m) => m.imdbID !== id);
+      // const canUndo = true;
 
       showToast({
-        message: 'Removed from watched',
+        message: `Removed "${movie.Title}"`,
         kind: 'info',
         actionLabel: 'Undo',
         onAction: () => {
