@@ -134,3 +134,19 @@
     transform: translateY(10px);
   }
 }
+
+.stale-indicator {
+  margin: 0.8rem 1.6rem;
+  font-size: 1.2rem;
+  color: var(--color-text-dark);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  opacity: 0.9;
+}
+
+/* optional: dim list while updating */
+.list.is-dimmed {
+  opacity: 0.65;
+  transition: opacity 0.15s ease;
+}
