@@ -97,8 +97,8 @@
 }
 
 .btn-delete:hover {
-  background: rgba(250, 82, 82, 0.25);
-  color: #fff;
+  background: var(--color-red-dark);
+  color: var(--color-red-light);
   transform: translateY(-50%) scale(1.05);
 }
 

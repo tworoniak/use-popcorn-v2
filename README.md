@@ -115,6 +115,7 @@ src/
       _lists.scss
       _pagination.scss
       _skeleton.scss
+      _star-rating.scss
       _states.scss
       _summary.scss
       _watched-controls.scss

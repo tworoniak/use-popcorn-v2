@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type KeyboardEvent } from 'react';
 import { Star } from 'lucide-react';
 
 type StarRatingProps = {
@@ -9,6 +9,10 @@ type StarRatingProps = {
   // controlled support
   rating?: number;
   onSetRating?: (rating: number) => void;
+
+  // a11y
+  label?: string;
+  allowClear?: boolean; // press 0 to clear
 };
 
 const containerStyle = {
@@ -29,6 +33,10 @@ const starStyle = {
   display: 'block',
   cursor: 'pointer',
 };
+
+function clamp(n: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, n));
+}
 
 function StarItem({
   onRate,
@@ -52,6 +60,7 @@ function StarItem({
       onClick={onRate}
       onMouseEnter={onHoverIn}
       onMouseLeave={onHoverOut}
+      aria-hidden='true'
     >
       {full ? (
         <Star fill={color} strokeWidth={1.5} color={color} size={size} />
@@ -68,6 +77,8 @@ export default function StarRating({
   size = 24,
   rating,
   onSetRating,
+  label = 'Rating',
+  allowClear = true,
 }: StarRatingProps) {
   const isControlled = typeof rating === 'number';
 
@@ -77,16 +88,70 @@ export default function StarRating({
 
   const currentRating = isControlled ? (rating ?? 0) : uncontrolledRating;
 
+  function setRatingValue(value: number) {
+    const next = clamp(value, 0, maxRating);
+    if (!isControlled) setUncontrolledRating(next);
+    onSetRating?.(next);
+  }
+
   function handleRate(value: number) {
-    if (!isControlled) setUncontrolledRating(value);
-    onSetRating?.(value);
+    setRatingValue(value);
+  }
+
+  function handleKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+    const key = e.key;
+
+    // prevent page scroll on arrow keys
+    if (
+      key === 'ArrowLeft' ||
+      key === 'ArrowRight' ||
+      key === 'ArrowUp' ||
+      key === 'ArrowDown' ||
+      key === 'Home' ||
+      key === 'End'
+    ) {
+      e.preventDefault();
+    }
+
+    switch (key) {
+      case 'ArrowRight':
+      case 'ArrowUp':
+        setRatingValue(currentRating + 1);
+        break;
+      case 'ArrowLeft':
+      case 'ArrowDown':
+        setRatingValue(currentRating - 1);
+        break;
+      case 'Home':
+        setRatingValue(1);
+        break;
+      case 'End':
+        setRatingValue(maxRating);
+        break;
+      case '0':
+        if (allowClear) setRatingValue(0);
+        break;
+      default:
+        break;
+    }
   }
 
   const textStyle = { lineHeight: '1', margin: 0 as const };
 
   return (
     <div style={containerStyle}>
-      <div style={starContainerStyle}>
+      {/* Focusable/keyboard-operable wrapper */}
+      <div
+        style={starContainerStyle}
+        role='slider'
+        tabIndex={0}
+        aria-label={label}
+        aria-valuemin={0}
+        aria-valuemax={maxRating}
+        aria-valuenow={currentRating}
+        onKeyDown={handleKeyDown}
+        onMouseLeave={() => setTempRating(0)}
+      >
         {Array.from({ length: maxRating }, (_, i) => (
           <StarItem
             key={i}
