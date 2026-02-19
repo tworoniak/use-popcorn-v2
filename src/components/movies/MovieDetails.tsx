@@ -67,11 +67,15 @@ export default function MovieDetails({
   }, [userRating]);
 
   const isWatched = watched.some((m) => m.imdbID === selectedId);
-  const watchedUserRating = watched.find(
-    (m) => m.imdbID === selectedId,
-  )?.userRating;
+  const watchedUserRating =
+    watched.find((m) => m.imdbID === selectedId)?.userRating ?? 0;
 
   useKey('Escape', onCloseMovie);
+
+  useEffect(() => {
+    // When opening details, prefill draft rating:
+    setUserRating(watchedUserRating);
+  }, [selectedId, watchedUserRating]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -124,6 +128,14 @@ export default function MovieDetails({
   function handleAdd() {
     if (!movie) return;
 
+    const prevRating =
+      watched.find((m) => m.imdbID === selectedId)?.userRating ?? 0;
+
+    if (isWatched && userRating === prevRating) {
+      onCloseMovie();
+      return;
+    }
+
     const now = Date.now();
 
     const newWatchedMovie: WatchedMovie = {
@@ -135,7 +147,7 @@ export default function MovieDetails({
       runtime: parseRuntime(movie.Runtime),
       userRating,
       countRatingDecisions: countRef.current,
-      createdAt: now,
+      createdAt: watched.find((m) => m.imdbID === selectedId)?.createdAt ?? now,
       updatedAt: now,
     };
 
@@ -183,23 +195,31 @@ export default function MovieDetails({
 
       <section>
         <div className='rating'>
+          <StarRating
+            maxRating={10}
+            size={24}
+            rating={userRating}
+            onSetRating={setUserRating}
+          />
+
           {!isWatched ? (
+            userRating > 0 && (
+              <button className='btn-add' onClick={handleAdd}>
+                + Add to list
+              </button>
+            )
+          ) : (
             <>
-              <StarRating
-                maxRating={10}
-                size={24}
-                onSetRating={setUserRating}
-              />
-              {userRating > 0 && (
+              {userRating !== watchedUserRating ? (
                 <button className='btn-add' onClick={handleAdd}>
-                  + Add to list
+                  Update rating
                 </button>
+              ) : (
+                <p>
+                  Your rating: {watchedUserRating} <span>⭐️</span>
+                </p>
               )}
             </>
-          ) : (
-            <p>
-              You rated this movie {watchedUserRating} <span>⭐️</span>
-            </p>
           )}
         </div>
 
