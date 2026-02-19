@@ -54,7 +54,13 @@ export default function App() {
   const [watchedQuery, setWatchedQuery] = useState('');
 
   const { theme, toggleTheme } = useTheme('dark');
-  const { toast, show: showToast, close: closeToast } = useToast();
+
+  const {
+    toast,
+    show: showToast,
+    close: closeToast,
+    isClosing: isToastClosing,
+  } = useToast();
 
   useKey('Slash', () => {
     document.getElementById('search')?.focus();
@@ -90,29 +96,65 @@ export default function App() {
   function handleAddWatched(movie: WatchedMovie) {
     setWatched((prev) => {
       const idx = prev.findIndex((m) => m.imdbID === movie.imdbID);
+
       if (idx === -1) {
-        showToast('Added to watched', 'success');
+        showToast({
+          message: 'Added to watched',
+          kind: 'success',
+        });
+
         return [...prev, movie];
       }
 
-      showToast('Updated your rating', 'info');
+      showToast({
+        message: 'Updated your rating',
+        kind: 'info',
+      });
 
       const existing = prev[idx];
+
       const updated: WatchedMovie = {
         ...existing,
         ...movie,
         createdAt: existing.createdAt ?? movie.createdAt,
         updatedAt: Date.now(),
       };
+
       const copy = [...prev];
       copy[idx] = updated;
+
       return copy;
     });
   }
 
   function handleDeleteWatched(id: string) {
-    setWatched((prev) => prev.filter((m) => m.imdbID !== id));
-    showToast('Removed from watched', 'info');
+    setWatched((prev) => {
+      const index = prev.findIndex((m) => m.imdbID === id);
+      if (index === -1) return prev;
+
+      const movie = prev[index];
+
+      const next = prev.filter((m) => m.imdbID !== id);
+
+      showToast({
+        message: 'Removed from watched',
+        kind: 'info',
+        actionLabel: 'Undo',
+        onAction: () => {
+          setWatched((curr) => {
+            // already restored?
+            if (curr.some((m) => m.imdbID === movie.imdbID)) return curr;
+
+            const copy = [...curr];
+            copy.splice(Math.min(index, copy.length), 0, movie);
+            return copy;
+          });
+          closeToast();
+        },
+      });
+
+      return next;
+    });
   }
 
   function scrollMoviesToTop() {
@@ -225,14 +267,7 @@ export default function App() {
             />
           )}
 
-          {query.trim().length >= 3 && isLoading && (
-            // <Loader text='Searching...' />
-            <MovieListSkeleton />
-          )}
-
-          {/* {query.trim().length >= 3 && !isLoading && error && (
-            <ErrorMessage message={error} onRetry={retry} />
-          )} */}
+          {query.trim().length >= 3 && isLoading && <MovieListSkeleton />}
 
           {!isLoading && error && (
             <ErrorMessage message={error} onRetry={retry} />
@@ -309,7 +344,10 @@ export default function App() {
           <Toast
             message={toast.message}
             kind={toast.kind}
+            actionLabel={toast.actionLabel}
+            onAction={toast.onAction}
             onClose={closeToast}
+            className={isToastClosing ? 'is-closing' : ''}
           />
         </div>
       )}
