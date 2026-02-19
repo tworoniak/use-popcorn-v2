@@ -36,10 +36,10 @@ export default function App() {
 
   const debouncedQuery = useDebounce(query, 400);
 
-  const { movies, isLoading, error, totalResults, retry } = useMovies(
-    debouncedQuery,
-    page,
-  );
+  const { movies, isLoading, isFetching, error, totalResults, retry } =
+    useMovies(debouncedQuery, page);
+  const isTyping = query.trim() !== debouncedQuery.trim();
+  const showStale = movies.length > 0 && (isTyping || isFetching);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -267,7 +267,9 @@ export default function App() {
             />
           )}
 
-          {query.trim().length >= 3 && isLoading && <MovieListSkeleton />}
+          {query.trim().length >= 3 && isLoading && movies.length === 0 && (
+            <MovieListSkeleton />
+          )}
 
           {!isLoading && error && (
             <ErrorMessage message={error} onRetry={retry} />
@@ -288,6 +290,12 @@ export default function App() {
             !error &&
             movies.length > 0 && (
               <>
+                {showStale && (
+                  <div className='stale-indicator' aria-live='polite'>
+                    {isTyping ? 'Waiting…' : 'Updating…'}
+                  </div>
+                )}
+
                 <MovieList
                   movies={movies}
                   selectedId={selectedId}
