@@ -34,7 +34,8 @@
 }
 
 .scroll-area {
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   overscroll-behavior: contain;
 
   scrollbar-gutter: auto;
