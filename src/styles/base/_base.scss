@@ -20,3 +20,7 @@ body {
   @include flex-column-space-between;
   min-height: 100vh;
 }
+
+// * {
+//   outline: 1px solid rgba(255, 0, 0, 0.15);
+// }
