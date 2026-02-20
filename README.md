@@ -39,13 +39,15 @@ Search for movies via the OMDb API, explore detailed information, rate films, an
 
 ## ⭐ Rating & Watched List
 
-- Custom interactive StarRating component
+- Custom interactive **StarRating** component
 - Add & update rating support
 - Undo delete with toast action
-- Watched list persists in localStorage
+- Watched list persists in `localStorage`
 - Sorting (date, rating, runtime, title, IMDb)
 - Filtering (rated / unrated)
 - Title search within watched list
+- Watched controls persisted in URL params
+- Feature-isolated WatchedPanel module
 
 ## 🎨 UI & UX
 
@@ -56,12 +58,21 @@ Search for movies via the OMDb API, explore detailed information, rate films, an
 - Scroll locking for modal state
 - Smooth animations for panel transitions
 
+## 🌐 URL-Driven State & Routing
+
+- Separate routes for search and movie details (`/search`, `/movie/:imdbID`)
+- Query & pagination state persisted in URL params
+- Watched list sort / filter / search persisted in URL params
+- Shareable deep links
+- Back / forward navigation fully supported
+- Refresh-safe state restoration
+
 ---
 
 ## 🛠 Tech Stack
 
 - **React**
-- **React Router**
+- **React Router (URL-driven state architecture)**
 - **TypeScript**
 - **Vite**
 - **Sass (SCSS)**
@@ -81,7 +92,9 @@ Search for movies via the OMDb API, explore detailed information, rate films, an
 ## 🧠 Architecture Highlights
 
 - Clean separation of layout / UI / domain components
-- Global UI state controlled at App level
+- URL as the source of truth for view state (search, pagination, watched controls)
+- Feature-based module structure (`features/watched`)
+- Pure domain logic extracted to `utils/`
 - Cached movie detail requests
 - Prefetch strategy for perceived performance
 - Optimistic updates with undo support
@@ -91,7 +104,6 @@ Search for movies via the OMDb API, explore detailed information, rate films, an
 
 ## 🚀 Possible Improvements / Next Steps
 
-- 🎬 Add animated detail panel slide-in
 - ⚡ Add keyboard navigation for search results (arrow keys)
 - 📌 Add “Recently viewed” quick-access strip
 - 🔥 Add trending movies on empty search
@@ -168,7 +180,12 @@ src/
       Toast.tsx
 
   data/
-    movies.ts
+    movies.ts // legacy types (movie data fetched from OMDb API; types now live in /types)
+
+  features/
+    watched/
+      useWatchedUrlState.ts
+      WatchedPanel.tsx
 
   hooks/
     useDebounce.ts
