@@ -33,6 +33,7 @@ import WatchedControls, {
 import ThemeToggle from './components/ui/ThemeToggle';
 import Toast from './components/ui/Toast';
 import NetworkBanner from './components/ui/NetworkBanner';
+import DetailsSwitcher from './components/movies/DetailsSwitcher';
 
 export default function App() {
   const [query, setQuery] = useState('');
@@ -46,7 +47,7 @@ export default function App() {
   const showStale = movies.length > 0 && (isTyping || isFetching);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
-
+  const [activeDetailsId, setActiveDetailsId] = useState<string | null>(null);
   const [watched, setWatched] = useLocalStorageState<WatchedMovie[]>(
     [],
     'watched',
@@ -108,11 +109,16 @@ export default function App() {
   }
 
   function handleSelectMovie(id: string) {
-    setSelectedId((current) => (id === current ? null : id));
+    setSelectedId((current) => {
+      const next = id === current ? null : id;
+      if (next) setActiveDetailsId(next); // only update when opening
+      return next;
+    });
   }
 
   function handleCloseMovie() {
     setSelectedId(null);
+    // keep activeDetailsId so DetailsSwitcher can animate out
   }
 
   function handleAddWatched(movie: WatchedMovie) {
@@ -335,43 +341,49 @@ export default function App() {
                   totalResults={totalResults}
                   onPrev={handlePrevPage}
                   onNext={handleNextPage}
+                  disabled={!isOnline}
                 />
               </>
             )}
         </Box>
 
         <Box>
-          {selectedId ? (
-            <MovieDetails
-              selectedId={selectedId}
-              onCloseMovie={handleCloseMovie}
-              onAddWatched={handleAddWatched}
-              watched={watched}
-            />
-          ) : (
-            <>
-              <WatchedSummary
-                watched={watchedVisible}
-                totalWatched={watched.length}
-              />
-
-              {watched.length > 0 && (
-                <WatchedControls
-                  sort={watchedSort}
-                  onSortChange={setWatchedSort}
-                  filter={watchedFilter}
-                  onFilterChange={handleFilterChange}
-                  watchedQuery={watchedQuery}
-                  onWatchedQueryChange={setWatchedQuery}
+          <DetailsSwitcher
+            selectedId={selectedId}
+            activeId={activeDetailsId}
+            watchedView={
+              <>
+                <WatchedSummary
+                  watched={watchedVisible}
+                  totalWatched={watched.length}
                 />
-              )}
 
-              <WatchedList
-                watched={watchedVisible}
-                onDeleteWatched={handleDeleteWatched}
+                {watched.length > 0 && (
+                  <WatchedControls
+                    sort={watchedSort}
+                    onSortChange={setWatchedSort}
+                    filter={watchedFilter}
+                    onFilterChange={handleFilterChange}
+                    watchedQuery={watchedQuery}
+                    onWatchedQueryChange={setWatchedQuery}
+                  />
+                )}
+
+                <WatchedList
+                  watched={watchedVisible}
+                  onDeleteWatched={handleDeleteWatched}
+                />
+              </>
+            }
+            detailsView={(id) => (
+              <MovieDetails
+                selectedId={id}
+                onCloseMovie={handleCloseMovie}
+                onAddWatched={handleAddWatched}
+                watched={watched}
               />
-            </>
-          )}
+            )}
+          />
         </Box>
       </Main>
       {toast && (

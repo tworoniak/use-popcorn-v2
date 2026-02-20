@@ -4,6 +4,11 @@ html {
   font-size: 62.5%;
 }
 
+html.is-modal-open,
+html.is-modal-open body {
+  overflow: hidden;
+}
+
 body {
   background-color: var(--color-background-900);
   color: var(--color-text);
