@@ -220,15 +220,6 @@ function Shell({ mode }: ShellProps) {
     });
   }
 
-  // const watchedVisible = useMemo(() => {
-  //   return getVisibleWatched(watched, watchedFilter, watchedQuery, watchedSort);
-  // }, [watched, watchedFilter, watchedQuery, watchedSort]);
-
-  // function handleFilterChange(next: WatchedFilter) {
-  //   setWatchedFilter(next);
-  //   setWatchedQuery('');
-  // }
-
   return (
     <>
       <Header>
