@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import fallbackPoster from '../../assets/no-poster.png';
 
 type PosterProps = {
@@ -16,26 +16,21 @@ function isValidPoster(src?: string | null) {
 export default function Poster({ src, alt, className }: PosterProps) {
   const [failed, setFailed] = useState(false);
 
-  // Reset error state when src changes (deferred to avoid React 19 warning)
-  useEffect(() => {
-    if (!failed) return;
+  const canTry = isValidPoster(src);
+  const finalSrc = !canTry || failed ? FALLBACK : (src as string);
 
-    const id = window.requestAnimationFrame(() => {
-      setFailed(false);
-    });
-
-    return () => window.cancelAnimationFrame(id);
-  }, [src, failed]);
-
-  const finalSrc = failed || !isValidPoster(src) ? FALLBACK : (src as string);
+  // console.log({ src, canTry, failed, finalSrc });
 
   return (
     <img
+      key={src ?? 'no-src'}
       className={className}
       src={finalSrc}
       alt={alt}
       loading='lazy'
+      decoding='async'
       onError={() => setFailed(true)}
+      referrerPolicy='no-referrer'
     />
   );
 }

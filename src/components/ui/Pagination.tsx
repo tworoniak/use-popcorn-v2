@@ -23,6 +23,8 @@ export default function Pagination({
   const isFirst = page <= 1;
   const isLast = page >= totalPages;
 
+  // console.log({ page, totalResults, totalPages, isFirst, isLast });
+
   return (
     <div className='pagination'>
       <button

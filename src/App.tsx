@@ -149,7 +149,11 @@ export default function App() {
 
   function handleCloseMovie() {
     setSelectedId(null);
-    // keep activeDetailsId so DetailsSwitcher can animate out
+
+    // move focus to a safe visible control
+    requestAnimationFrame(() => {
+      document.getElementById('search')?.focus();
+    });
   }
 
   function handleAddWatched(movie: WatchedMovie) {
