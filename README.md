@@ -42,9 +42,9 @@ It allows users to search movies via the OMDb API, view movie details, rate film
 - 📌 Add “Recently viewed” quick-access strip
 - 🔥 Add trending movies on empty search
 - 🧠 Add intelligent ranking boost for watched genres
-- Better accessibility (focus management, aria attributes)
-- Add unit tests (Vitest + React Testing Library)
-- Add deployment workflow (Netlify/Vercel)
+- 🌟 Better accessibility (focus management, aria attributes)
+- 🚀 Add unit tests (Vitest + React Testing Library)
+- 🧩 Add deployment workflow (Netlify/Vercel)
 
 ---
 
@@ -77,6 +77,7 @@ src/
       Main.tsx
       NavBar.tsx
     movies/
+      DetailsSwitcher.tsx
       MovieDetails.tsx
       MovieItem.tsx
       MovieList.tsx
@@ -107,6 +108,8 @@ src/
     useLocalStorageState.ts
     useMovies.ts
     useOnlineStatus.ts
+    useSwipeToClose.ts
+    useSwipeToCloseDrag.ts
     useTheme.ts
     useToast.ts
 

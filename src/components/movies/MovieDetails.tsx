@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+
 import { ArrowLeft } from 'lucide-react';
 
 import Poster from '../ui/Poster';
@@ -7,6 +8,8 @@ import ErrorMessage from '../ui/ErrorMessage';
 import StarRating from '../ui/StarRating';
 
 import { useKey } from '../../hooks/useKey';
+import { useSwipeToClose } from '../../hooks/useSwipeToClose';
+
 import type { WatchedMovie } from '../../data/movies';
 
 import {
@@ -47,6 +50,14 @@ export default function MovieDetails({
   const isWatched = watched.some((m) => m.imdbID === selectedId);
   const watchedUserRating =
     watched.find((m) => m.imdbID === selectedId)?.userRating ?? 0;
+
+  const detailsRef = useRef<HTMLDivElement>(null);
+  useSwipeToClose(detailsRef, onCloseMovie, { enabled: true, thresholdPx: 90 });
+
+  useEffect(() => {
+    document.documentElement.classList.add('is-modal-open');
+    return () => document.documentElement.classList.remove('is-modal-open');
+  }, []);
 
   // Prefill draft rating on open/switch
   useEffect(() => {
@@ -156,7 +167,7 @@ export default function MovieDetails({
   if (!movie) return <div className='details' />;
 
   return (
-    <div className='details'>
+    <div className='details' ref={detailsRef}>
       <header>
         <button className='btn-back' onClick={onCloseMovie}>
           <ArrowLeft size={24} />
