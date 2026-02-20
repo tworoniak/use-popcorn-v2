@@ -35,7 +35,7 @@ export default function MovieDetails({
   selectedId,
   onCloseMovie,
   onAddWatched,
-  onTitleChange,
+  // onTitleChange,
   watched,
 }: MovieDetailsProps) {
   const [movie, setMovie] = useState<OmdbMovieSuccess | null>(null);
@@ -57,14 +57,16 @@ export default function MovieDetails({
   useSwipeToClose(detailsRef, onCloseMovie, { enabled: true, thresholdPx: 90 });
 
   useEffect(() => {
-    if (movie?.Title) onTitleChange?.(`Movie | ${movie.Title}`);
-    return () => onTitleChange?.(null);
-  }, [movie?.Title, onTitleChange]);
+    if (!movie?.Title) return;
 
-  useEffect(() => {
-    document.documentElement.classList.add('is-modal-open');
-    return () => document.documentElement.classList.remove('is-modal-open');
-  }, []);
+    // const prev = document.title;
+    document.title = `Movie | ${movie.Title}`;
+
+    return () => {
+      document.title = 'usePopcorn v2.0';
+      // or: document.title = prev; (either is fine)
+    };
+  }, [movie?.Title]);
 
   // Prefill draft rating on open/switch
   useEffect(() => {
