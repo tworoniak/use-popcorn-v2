@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react'; // , useState
 import {
   Navigate,
   Route,
@@ -27,9 +27,6 @@ import Search from './components/movies/Search';
 import NumResults from './components/movies/NumResults';
 import MovieList from './components/movies/MovieList';
 import MovieDetails from './components/movies/MovieDetails';
-import WatchedSummary from './components/movies/WatchedSummary';
-import WatchedList from './components/movies/WatchedList';
-import WatchedControls from './components/movies/WatchedControls';
 import ErrorMessage from './components/ui/ErrorMessage';
 import Pagination from './components/ui/Pagination';
 import EmptyState from './components/ui/EmptyState';
@@ -39,9 +36,8 @@ import Toast from './components/ui/Toast';
 import NetworkBanner from './components/ui/NetworkBanner';
 import Footer from './components/layout/Footer';
 
-import type { WatchedFilter, WatchedSort } from './types/watched';
-
-import { getVisibleWatched } from './utils/watched';
+import WatchedPanel from './features/watched/WatchedPanel';
+import { useWatchedUrlState } from './features/watched/useWatchedUrlState';
 
 export default function App() {
   return (
@@ -83,9 +79,14 @@ function Shell({ mode }: ShellProps) {
     [watched],
   );
 
-  const [watchedSort, setWatchedSort] = useState<WatchedSort>('date-desc');
-  const [watchedFilter, setWatchedFilter] = useState<WatchedFilter>('all');
-  const [watchedQuery, setWatchedQuery] = useState('');
+  const {
+    sort: watchedSort,
+    setSort: setWatchedSort,
+    filter: watchedFilter,
+    setFilter: setWatchedFilter,
+    query: watchedQuery,
+    setQuery: setWatchedQuery,
+  } = useWatchedUrlState();
 
   const { theme, toggleTheme } = useTheme('dark');
   const isOnline = useOnlineStatus();
@@ -219,14 +220,14 @@ function Shell({ mode }: ShellProps) {
     });
   }
 
-  const watchedVisible = useMemo(() => {
-    return getVisibleWatched(watched, watchedFilter, watchedQuery, watchedSort);
-  }, [watched, watchedFilter, watchedQuery, watchedSort]);
+  // const watchedVisible = useMemo(() => {
+  //   return getVisibleWatched(watched, watchedFilter, watchedQuery, watchedSort);
+  // }, [watched, watchedFilter, watchedQuery, watchedSort]);
 
-  function handleFilterChange(next: WatchedFilter) {
-    setWatchedFilter(next);
-    setWatchedQuery('');
-  }
+  // function handleFilterChange(next: WatchedFilter) {
+  //   setWatchedFilter(next);
+  //   setWatchedQuery('');
+  // }
 
   return (
     <>
@@ -310,29 +311,18 @@ function Shell({ mode }: ShellProps) {
               onCloseMovie={handleCloseMovie}
               onAddWatched={handleAddWatched}
               watched={watched}
-              // onTitleChange={setPageTitle}
             />
           ) : (
             <>
-              <WatchedSummary
-                watched={watchedVisible}
-                totalWatched={watched.length}
-              />
-
-              {watched.length > 0 && (
-                <WatchedControls
-                  sort={watchedSort}
-                  onSortChange={setWatchedSort}
-                  filter={watchedFilter}
-                  onFilterChange={handleFilterChange}
-                  watchedQuery={watchedQuery}
-                  onWatchedQueryChange={setWatchedQuery}
-                />
-              )}
-
-              <WatchedList
-                watched={watchedVisible}
+              <WatchedPanel
+                watched={watched}
                 onDeleteWatched={handleDeleteWatched}
+                sort={watchedSort}
+                onSortChange={setWatchedSort}
+                filter={watchedFilter}
+                onFilterChange={setWatchedFilter}
+                query={watchedQuery}
+                onQueryChange={setWatchedQuery}
               />
             </>
           )}
