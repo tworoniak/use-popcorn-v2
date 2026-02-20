@@ -2,8 +2,8 @@
 
 # usePopcorn v2.0 🍿
 
-**usePopcorn v2.0** is a React + TypeScript movie tracking application built with Vite.  
-It allows users to search movies via the OMDb API, view movie details, rate films, and manage a persistent watched list stored in `localStorage`.
+**usePopcorn v2.0** is a production-style React + TypeScript movie tracking application built with Vite.
+Search for movies via the OMDb API, explore detailed information, rate films, and manage a persistent watched list — all with polished UX behaviors including animated panels, swipe gestures, caching, toasts, and responsive design.
 
 ---
 
@@ -17,6 +17,44 @@ It allows users to search movies via the OMDb API, view movie details, rate film
 - 💾 Watched list persists using `localStorage`
 - ⌨️ Keyboard support (`Escape` closes movie details)
 - 🎨 Styled with **Sass (SCSS)** using a modular architecture
+
+## 🔍 Search & Results
+
+- Debounced movie search (400ms)
+- Stale results indicator while fetching
+- Pagination with proper disabled states
+- Empty states for no results
+- Retry handling for network/API errors
+- Network status banner (offline detection)
+
+## 🎬 Movie Details
+
+- Animated slide-in detail panel
+- Mobile overlay modal behavior
+- Swipe-to-close with live drag animation (mobile)
+- Escape key closes details
+- Prefetch movie details on hover / tap-hold
+- Client-side caching of movie details
+- Poster fallback handling for missing images
+
+## ⭐ Rating & Watched List
+
+- Custom interactive StarRating component
+- Add & update rating support
+- Undo delete with toast action
+- Watched list persists in localStorage
+- Sorting (date, rating, runtime, title, IMDb)
+- Filtering (rated / unrated)
+- Title search within watched list
+
+## 🎨 UI & UX
+
+- Dark / Light theme toggle (persisted)
+- Toast notification system
+- Skeleton loading states
+- Responsive mobile-first layout
+- Scroll locking for modal state
+- Smooth animations for panel transitions
 
 ---
 
@@ -32,6 +70,21 @@ It allows users to search movies via the OMDb API, view movie details, rate film
   - `useKey`
   - `useLocalStorageState`
   - `useDebounce`
+  - `useOnlineStatus`
+  - `useSwipeToCloseDrag`
+  - `useTheme`
+  - `useToast`
+
+---
+
+## 🧠 Architecture Highlights
+
+- Clean separation of layout / UI / domain components
+- Global UI state controlled at App level
+- Cached movie detail requests
+- Prefetch strategy for perceived performance
+- Optimistic updates with undo support
+- Mobile interaction patterns (gesture-driven UX)
 
 ---
 
