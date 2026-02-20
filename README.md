@@ -216,8 +216,13 @@ src/
       _theme.scss
     main.scss
 
+  types/
+    movies.ts
+    watched.ts
+
   utils/
     average.ts
+    watched.ts
 
   App.tsx
   main.tsx

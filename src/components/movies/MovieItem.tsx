@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import type { Movie } from '../../data/movies';
+import type { Movie } from '../../types/movies';
 import { prefetchMovieDetails } from '../../api/omdbDetailsCache';
 import Poster from '../ui/Poster';
 

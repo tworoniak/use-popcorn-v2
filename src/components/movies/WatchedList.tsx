@@ -1,4 +1,4 @@
-import type { WatchedMovie } from '../../data/movies';
+import type { WatchedMovie } from '../../types/movies';
 import WatchedMovieItem from './WatchedMovieItem';
 
 type WatchedListProps = {

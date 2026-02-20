@@ -1,6 +1,6 @@
 // src/hooks/useMovies.ts
 import { useEffect, useState, useRef } from 'react';
-import type { Movie } from '../data/movies';
+import type { Movie } from '../types/movies';
 
 const OMDB_KEY = import.meta.env.VITE_OMDB_KEY ?? 'f84fc31d';
 
