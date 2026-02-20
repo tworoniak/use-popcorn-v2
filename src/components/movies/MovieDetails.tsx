@@ -1,35 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
-import StarRating from '../ui/StarRating';
-import { useKey } from '../../hooks/useKey';
-import type { WatchedMovie } from '../../data/movies';
-import Loader from '../ui/Loader';
-import Poster from '../ui/Poster';
-import ErrorMessage from '../ui/ErrorMessage';
 import { ArrowLeft } from 'lucide-react';
 
-// Prefer env var, fallback is ok for local dev.
-const OMDB_KEY = import.meta.env.VITE_OMDB_KEY ?? 'f84fc31d';
+import Poster from '../ui/Poster';
+import Loader from '../ui/Loader';
+import ErrorMessage from '../ui/ErrorMessage';
+import StarRating from '../ui/StarRating';
 
-type OmdbMovieSuccess = {
-  Response: 'True';
-  Title: string;
-  Year: string;
-  Poster: string;
-  Runtime: string; // "148 min" or "N/A"
-  imdbRating: string; // "8.8" or "N/A"
-  Plot: string;
-  Released: string;
-  Actors: string;
-  Director: string;
-  Genre: string;
-};
+import { useKey } from '../../hooks/useKey';
+import type { WatchedMovie } from '../../data/movies';
 
-type OmdbMovieError = {
-  Response: 'False';
-  Error: string;
-};
-
-type OmdbMovieResponse = OmdbMovieSuccess | OmdbMovieError;
+import {
+  getCachedMovieDetails,
+  prefetchMovieDetails,
+  type OmdbMovieSuccess,
+} from '../../api/omdbDetailsCache';
 
 type MovieDetailsProps = {
   selectedId: string;
@@ -43,26 +27,6 @@ function parseRuntime(runtime: string): number {
   return Number.isFinite(n) ? n : 0;
 }
 
-/* ---------------------------
-   In-memory cache (module-level)
----------------------------- */
-type DetailsCacheEntry = { movie: OmdbMovieSuccess; ts: number };
-const detailsCache = new Map<string, DetailsCacheEntry>();
-const MAX_DETAILS_CACHE = 80;
-
-function pruneDetailsCache() {
-  if (detailsCache.size <= MAX_DETAILS_CACHE) return;
-
-  const entries = Array.from(detailsCache.entries()).sort(
-    (a, b) => a[1].ts - b[1].ts,
-  );
-  const removeCount = detailsCache.size - MAX_DETAILS_CACHE;
-
-  for (let i = 0; i < removeCount; i++) {
-    detailsCache.delete(entries[i][0]);
-  }
-}
-
 export default function MovieDetails({
   selectedId,
   onCloseMovie,
@@ -71,8 +35,8 @@ export default function MovieDetails({
 }: MovieDetailsProps) {
   const [movie, setMovie] = useState<OmdbMovieSuccess | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isFetching, setIsFetching] = useState(false); // background refresh
-  const [error, setError] = useState<string>('');
+  const [isFetching, setIsFetching] = useState(false);
+  const [error, setError] = useState('');
 
   const [userRating, setUserRating] = useState<number>(0);
   const countRef = useRef(0);
@@ -80,14 +44,11 @@ export default function MovieDetails({
   const [retryKey, setRetryKey] = useState(0);
   const retry = () => setRetryKey((k) => k + 1);
 
-  // used to avoid races when quickly switching movies
-  const lastFetchIdRef = useRef<string | null>(null);
-
   const isWatched = watched.some((m) => m.imdbID === selectedId);
   const watchedUserRating =
     watched.find((m) => m.imdbID === selectedId)?.userRating ?? 0;
 
-  // Prefill draft rating when opening / switching movies
+  // Prefill draft rating on open/switch
   useEffect(() => {
     setUserRating(watchedUserRating);
     countRef.current = 0;
@@ -101,58 +62,34 @@ export default function MovieDetails({
 
   useEffect(() => {
     const controller = new AbortController();
-    const cached = detailsCache.get(selectedId);
+    const cached = getCachedMovieDetails(selectedId);
     const forceFetch = retryKey > 0;
 
-    lastFetchIdRef.current = selectedId;
-
-    // Serve cached immediately (instant open)
     if (cached && !forceFetch) {
-      setMovie(cached.movie);
+      setMovie(cached);
       setError('');
       setIsLoading(false);
-      // we'll still revalidate in background below
     }
 
-    async function getMovieDetails() {
+    async function load() {
       try {
         setError('');
 
-        const hadData = !!(cached && !forceFetch) || !!movie;
-
+        const hadData = !!cached || !!movie;
         if (!hadData) setIsLoading(true);
         else setIsFetching(true);
 
-        const res = await fetch(
-          `https://www.omdbapi.com/?apikey=${OMDB_KEY}&i=${selectedId}`,
-          { signal: controller.signal },
-        );
+        await prefetchMovieDetails(selectedId, controller.signal);
 
-        if (!res.ok) throw new Error('Failed to fetch movie details');
-
-        const data: OmdbMovieResponse = await res.json();
-
-        if (data.Response === 'False') {
-          throw new Error(data.Error || 'Movie not found');
-        }
-
-        // Update state only if this is still the selected movie (avoid race)
-        if (lastFetchIdRef.current === selectedId) {
-          setMovie(data);
-        }
-
-        // cache it
-        detailsCache.set(selectedId, { movie: data, ts: Date.now() });
-        pruneDetailsCache();
+        const fresh = getCachedMovieDetails(selectedId);
+        if (fresh) setMovie(fresh);
       } catch (err: unknown) {
         if (err instanceof DOMException && err.name === 'AbortError') return;
 
         const message =
           err instanceof Error ? err.message : 'Unknown error occurred';
-
         setError(message);
 
-        // Keep cached movie visible if present; otherwise clear
         if (!cached) setMovie(null);
       } finally {
         setIsLoading(false);
@@ -161,8 +98,7 @@ export default function MovieDetails({
       }
     }
 
-    // stale-while-revalidate: always fetch (unless we want TTL logic)
-    getMovieDetails();
+    load();
 
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -179,7 +115,6 @@ export default function MovieDetails({
   function handleAdd() {
     if (!movie) return;
 
-    // if watched and unchanged rating, just close
     if (isWatched && userRating === watchedUserRating) {
       onCloseMovie();
       return;
@@ -204,7 +139,6 @@ export default function MovieDetails({
     onCloseMovie();
   }
 
-  // Loading: show loader only when we have nothing to display
   if (isLoading && !movie)
     return (
       <div className='details'>
@@ -276,7 +210,6 @@ export default function MovieDetails({
             </p>
           )}
 
-          {/* If fetch failed but we have cached content, show non-blocking error */}
           {error && movie && (
             <p className='details-error' role='status' aria-live='polite'>
               <span>⛔️</span> {error}{' '}

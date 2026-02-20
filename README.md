@@ -60,6 +60,9 @@ src/
   api/
     omdbDetailsCache.ts
 
+  assets/
+    no-poster.png
+
   components/
     layout/
       Box.tsx
