@@ -23,7 +23,7 @@ type MovieDetailsProps = {
   onCloseMovie: () => void;
   onAddWatched: (movie: WatchedMovie) => void;
   watched: WatchedMovie[];
-  onTitleChange: (title: string | null) => void;
+  onTitleChange?: (title: string | null) => void;
 };
 
 function parseRuntime(runtime: string): number {
@@ -57,13 +57,8 @@ export default function MovieDetails({
   useSwipeToClose(detailsRef, onCloseMovie, { enabled: true, thresholdPx: 90 });
 
   useEffect(() => {
-    if (movie?.Title) {
-      onTitleChange(`Movie | ${movie.Title}`);
-    }
-
-    return () => {
-      onTitleChange(null);
-    };
+    if (movie?.Title) onTitleChange?.(`Movie | ${movie.Title}`);
+    return () => onTitleChange?.(null);
   }, [movie?.Title, onTitleChange]);
 
   useEffect(() => {
