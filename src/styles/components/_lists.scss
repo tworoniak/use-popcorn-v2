@@ -32,7 +32,7 @@
       box-shadow: 0 10px 22px rgba(103, 65, 217, 0.18);
     }
 
-    @include respond($bp-md) {
+    @include respond($bp-lg) {
       padding: 1.4rem 1.8rem;
     }
   }
@@ -44,7 +44,7 @@
     border-radius: 0.6rem;
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
 
-    @include respond($bp-md) {
+    @include respond($bp-lg) {
       width: 100%;
       grid-row: 1 / -1;
     }
