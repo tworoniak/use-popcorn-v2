@@ -57,6 +57,9 @@ npm install
 ```txt
 
 src/
+  api/
+    omdbDetailsCache.ts
+
   components/
     layout/
       Box.tsx

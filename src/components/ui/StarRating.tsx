@@ -73,7 +73,7 @@ function StarItem({
 
 export default function StarRating({
   maxRating = 10,
-  color = '#fcc419',
+  color = 'var(--color-rating)',
   size = 24,
   rating,
   onSetRating,

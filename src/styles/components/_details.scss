@@ -77,3 +77,30 @@
   padding: 0.4rem;
   margin-top: 2.4rem;
 }
+
+.details-updating {
+  font-size: 1.2rem;
+  margin-left: 0.8rem;
+  opacity: 0.8;
+  font-weight: 600;
+  color: var(--color-text-dark);
+}
+
+.details-error {
+  margin: 0;
+  font-size: 1.3rem;
+  opacity: 0.95;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.btn-retry-inline {
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}

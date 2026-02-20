@@ -8,13 +8,11 @@
   border-radius: 0.9rem;
   position: relative;
 
-  // nice “panel” feel
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--color-border);
   box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
 
-  // IMPORTANT: no scrolling here
   overflow: hidden;
 
   @include respond($bp-lg) {
@@ -38,10 +36,8 @@
   overflow: auto;
   overscroll-behavior: contain;
 
-  // makes it feel like macOS overlay scrollbars
   scrollbar-gutter: auto;
 
-  // Firefox (still limited, but we can make it subtle)
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
 
@@ -63,14 +59,14 @@
   // Reveal scrollbar only on hover/focus
   &:hover,
   &:focus-within {
-    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+    scrollbar-color: var(--color-scrollbar-thumb) transparent;
 
     &::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.25);
+      background: var(--color-scrollbar-thumb);
     }
 
     &::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.35);
+      background: var(--color-scrollbar-thumb-hover);
     }
   }
 }
