@@ -109,11 +109,25 @@ Clone the repo and install dependencies:
 git clone <your-repo-url>
 cd use-popcorn-v2
 npm install
+npm run dev
+```
+
+---
+
+## 🌐 Environment Variables
+
+Create a .env file:
+
+- Get your API key at: https://www.omdbapi.com
+
+```env
+VITE_OMDB_KEY=your_api_key_here
 
 ```
 
-```txt
+---
 
+```txt
 src/
   api/
     omdbDetailsCache.ts
@@ -206,5 +220,4 @@ src/
 
   App.tsx
   main.tsx
-
 ```
