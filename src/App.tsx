@@ -89,6 +89,21 @@ export default function App() {
     return () => controller.abort();
   }, [movies, isLoading]);
 
+  useEffect(() => {
+    const root = document.documentElement; // <html>
+
+    if (selectedId) {
+      root.classList.add('is-modal-open');
+    } else {
+      root.classList.remove('is-modal-open');
+    }
+
+    return () => {
+      // safety cleanup on unmount
+      root.classList.remove('is-modal-open');
+    };
+  }, [selectedId]);
+
   // when user types a new query, reset page + close details (polish)
   function handleSetQuery(nextQuery: string) {
     setQuery((prev) => {
@@ -351,6 +366,7 @@ export default function App() {
           <DetailsSwitcher
             selectedId={selectedId}
             activeId={activeDetailsId}
+            onRequestClose={handleCloseMovie}
             watchedView={
               <>
                 <WatchedSummary

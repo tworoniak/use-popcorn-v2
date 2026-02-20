@@ -187,6 +187,8 @@
     /* optional: feel more native */
     will-change: transform;
     transition: transform 220ms ease;
+
+    touch-action: pan-y;
   }
 
   .panel__pane--details.is-active {
