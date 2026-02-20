@@ -57,6 +57,9 @@ export default function App() {
   const [watchedSort, setWatchedSort] = useState<WatchedSort>('date-desc');
   const [watchedFilter, setWatchedFilter] = useState<WatchedFilter>('all');
   const [watchedQuery, setWatchedQuery] = useState('');
+  const [currentMovieTitle, setCurrentMovieTitle] = useState<string | null>(
+    null,
+  );
 
   const { theme, toggleTheme } = useTheme('dark');
   const isOnline = useOnlineStatus();
@@ -71,6 +74,10 @@ export default function App() {
   useKey('Slash', () => {
     document.getElementById('search')?.focus();
   });
+
+  useEffect(() => {
+    document.title = currentMovieTitle ?? 'usePopcorn v2.0';
+  }, [currentMovieTitle]);
 
   useEffect(() => {
     if (isLoading) return;
@@ -102,6 +109,15 @@ export default function App() {
       // safety cleanup on unmount
       root.classList.remove('is-modal-open');
     };
+  }, [selectedId]);
+
+  useEffect(() => {
+    if (!selectedId) {
+      document.title = 'usePopcorn v2.0';
+      return;
+    }
+
+    // If details are open, we let MovieDetails tell us the title
   }, [selectedId]);
 
   // when user types a new query, reset page + close details (polish)
@@ -397,6 +413,7 @@ export default function App() {
                 onCloseMovie={handleCloseMovie}
                 onAddWatched={handleAddWatched}
                 watched={watched}
+                onTitleChange={setCurrentMovieTitle}
               />
             )}
           />
