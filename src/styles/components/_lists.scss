@@ -20,7 +20,7 @@
     border-radius: 1.2rem;
     border: 1px solid var(--color-border);
 
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--color-list-background);
 
     transition: all 0.25s ease;
 
@@ -76,7 +76,7 @@
 
   &:hover {
     transform: translateY(-2px);
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--color-list-background);
     border-color: var(--color-border);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
   }
