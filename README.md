@@ -61,6 +61,7 @@ Search for movies via the OMDb API, explore detailed information, rate films, an
 ## 🛠 Tech Stack
 
 - **React**
+- **React Router**
 - **TypeScript**
 - **Vite**
 - **Sass (SCSS)**

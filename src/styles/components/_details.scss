@@ -15,7 +15,7 @@
 
   touch-action: pan-y; // allow vertical scroll; horizontal swipe still works
 
-  @include respond($bp-lg) {
+  @include respond($bp-xl) {
     position: static;
     height: auto;
   }
