@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDebounce } from './hooks/useDebounce';
 import { useLocalStorageState } from './hooks/useLocalStorageState';
 import { useMovies } from './hooks/useMovies';
@@ -6,6 +6,8 @@ import { useKey } from './hooks/useKey';
 import { useTheme } from './hooks/useTheme';
 import { useOnlineStatus } from './hooks/useOnlineStatus';
 import { useToast } from './hooks/useToast';
+
+import { prefetchMovieDetails } from './api/omdbDetailsCache';
 
 import type { WatchedMovie } from './data/movies';
 
@@ -68,6 +70,23 @@ export default function App() {
   useKey('Slash', () => {
     document.getElementById('search')?.focus();
   });
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (!movies.length) return;
+
+    const controller = new AbortController();
+
+    // Decide how many to prefetch based on screen width
+    const prefetchCount = window.innerWidth < 600 ? 2 : 3;
+    const top = movies.slice(0, prefetchCount);
+
+    top.forEach((m) => {
+      prefetchMovieDetails(m.imdbID, controller.signal).catch(() => {});
+    });
+
+    return () => controller.abort();
+  }, [movies, isLoading]);
 
   // when user types a new query, reset page + close details (polish)
   function handleSetQuery(nextQuery: string) {

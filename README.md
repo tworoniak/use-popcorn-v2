@@ -37,6 +37,11 @@ It allows users to search movies via the OMDb API, view movie details, rate film
 
 ## 🚀 Possible Improvements / Next Steps
 
+- 🎬 Add animated detail panel slide-in
+- ⚡ Add keyboard navigation for search results (arrow keys)
+- 📌 Add “Recently viewed” quick-access strip
+- 🔥 Add trending movies on empty search
+- 🧠 Add intelligent ranking boost for watched genres
 - Better accessibility (focus management, aria attributes)
 - Add unit tests (Vitest + React Testing Library)
 - Add deployment workflow (Netlify/Vercel)
