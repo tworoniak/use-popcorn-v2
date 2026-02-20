@@ -1,4 +1,4 @@
-import type { WatchedMovie } from '../../data/movies';
+import type { WatchedMovie } from '../../types/movies';
 import Poster from '../ui/Poster';
 import { Trash2 } from 'lucide-react';
 

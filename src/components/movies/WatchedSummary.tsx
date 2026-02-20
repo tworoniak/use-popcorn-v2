@@ -1,4 +1,4 @@
-import type { WatchedMovie } from '../../data/movies';
+import type { WatchedMovie } from '../../types/movies';
 import { average } from '../../utils/average';
 
 type WatchedSummaryProps = {

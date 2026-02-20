@@ -16,7 +16,7 @@ import { useTheme } from './hooks/useTheme';
 import { useOnlineStatus } from './hooks/useOnlineStatus';
 import { useToast } from './hooks/useToast';
 
-import type { WatchedMovie } from './data/movies';
+import type { WatchedMovie } from './types/movies';
 
 import Header from './components/layout/Header';
 import NavBar from './components/layout/NavBar';
@@ -29,10 +29,7 @@ import MovieList from './components/movies/MovieList';
 import MovieDetails from './components/movies/MovieDetails';
 import WatchedSummary from './components/movies/WatchedSummary';
 import WatchedList from './components/movies/WatchedList';
-import WatchedControls, {
-  type WatchedFilter,
-  type WatchedSort,
-} from './components/movies/WatchedControls';
+import WatchedControls from './components/movies/WatchedControls';
 import ErrorMessage from './components/ui/ErrorMessage';
 import Pagination from './components/ui/Pagination';
 import EmptyState from './components/ui/EmptyState';
@@ -41,6 +38,10 @@ import ThemeToggle from './components/ui/ThemeToggle';
 import Toast from './components/ui/Toast';
 import NetworkBanner from './components/ui/NetworkBanner';
 import Footer from './components/layout/Footer';
+
+import type { WatchedFilter, WatchedSort } from './types/watched';
+
+import { getVisibleWatched } from './utils/watched';
 
 export default function App() {
   return (
@@ -82,7 +83,6 @@ function Shell({ mode }: ShellProps) {
     [watched],
   );
 
-  // const [pageTitle, setPageTitle] = useState<string | null>(null);
   const [watchedSort, setWatchedSort] = useState<WatchedSort>('date-desc');
   const [watchedFilter, setWatchedFilter] = useState<WatchedFilter>('all');
   const [watchedQuery, setWatchedQuery] = useState('');
@@ -109,15 +109,6 @@ function Shell({ mode }: ShellProps) {
       root.classList.remove('is-modal-open');
     };
   }, [selectedId]);
-
-  // useEffect(() => {
-  //   document.title = pageTitle ?? 'usePopcorn v2.0';
-  // }, [pageTitle]);
-
-  // safety: if selectedId becomes null, reset title immediately
-  // useEffect(() => {
-  //   if (!selectedId) setPageTitle(null);
-  // }, [selectedId]);
 
   function setParam(updates: Record<string, string | null>) {
     const next = new URLSearchParams(searchParams);
@@ -228,8 +219,9 @@ function Shell({ mode }: ShellProps) {
     });
   }
 
-  // TODO: keep your sort/filter functions (you already have them)
-  const watchedVisible = watched; // replace with your computed pipeline
+  const watchedVisible = useMemo(() => {
+    return getVisibleWatched(watched, watchedFilter, watchedQuery, watchedSort);
+  }, [watched, watchedFilter, watchedQuery, watchedSort]);
 
   function handleFilterChange(next: WatchedFilter) {
     setWatchedFilter(next);

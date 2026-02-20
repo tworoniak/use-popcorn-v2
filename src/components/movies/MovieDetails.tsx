@@ -10,7 +10,7 @@ import StarRating from '../ui/StarRating';
 import { useKey } from '../../hooks/useKey';
 import { useSwipeToClose } from '../../hooks/useSwipeToClose';
 
-import type { WatchedMovie } from '../../data/movies';
+import type { WatchedMovie } from '../../types/movies';
 
 import {
   getCachedMovieDetails,
