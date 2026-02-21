@@ -120,10 +120,10 @@ export function useSwipeToCloseDrag(
       if (shouldClose) {
         const width = window.innerWidth || 400;
 
+        root.style.opacity = '1';
+
         snapTo(width, () => {
-          // restore inline styles before closing
-          root.style.transform = originalTransform;
-          root.style.transition = originalTransition;
+          root.style.opacity = '0'; // ✅ fully hide
           onClose();
         });
       } else {
@@ -148,6 +148,7 @@ export function useSwipeToCloseDrag(
       root.removeEventListener('touchend', finishGesture);
       root.removeEventListener('touchcancel', finishGesture);
 
+      root.style.opacity = '';
       root.style.willChange = originalWillChange || '';
       root.style.transition = originalTransition;
       root.style.transform = originalTransform;
