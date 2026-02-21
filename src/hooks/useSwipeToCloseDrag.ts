@@ -1,8 +1,8 @@
-import { useEffect, type RefObject } from 'react';
+// src/hooks/useSwipeToCloseDrag.ts
+import { useEffect } from 'react';
 
 type Options = {
   enabled?: boolean;
-  enabledMediaQuery?: string; // e.g. '(max-width: 600px)'
   thresholdPx?: number;
   velocityPxPerMs?: number;
   slopPx?: number;
@@ -10,11 +10,10 @@ type Options = {
 };
 
 export function useSwipeToCloseDrag(
-  ref: RefObject<HTMLElement | null>,
+  el: HTMLElement | null,
   onClose: () => void,
   {
     enabled = true,
-    enabledMediaQuery,
     thresholdPx = 110,
     velocityPxPerMs = 0.6,
     slopPx = 10,
@@ -22,22 +21,15 @@ export function useSwipeToCloseDrag(
   }: Options = {},
 ) {
   useEffect(() => {
-    const root = ref.current;
-    if (!root) return;
+    if (!el || !enabled) return;
 
-    const mediaOk = enabledMediaQuery
-      ? window.matchMedia(enabledMediaQuery).matches
-      : true;
-
-    const isEnabled = enabled && mediaOk;
-    if (!isEnabled) return;
+    const root = el;
 
     let startX = 0;
     let startY = 0;
     let startT = 0;
 
-    let dragging = false;
-    let locked = false;
+    let mode: 'undecided' | 'horizontal' | 'vertical' = 'undecided';
     let lastDx = 0;
 
     const originalTransition = root.style.transition;
@@ -45,33 +37,22 @@ export function useSwipeToCloseDrag(
     const originalWillChange = root.style.willChange;
 
     function setTranslate(dx: number) {
-      const el = ref.current;
-      if (!el) return;
-
       const clamped = Math.max(0, dx);
       lastDx = clamped;
-      el.style.transform = `translateX(${clamped}px)`;
+      root.style.transform = `translateX(${clamped}px)`;
     }
 
     function snapTo(dx: number, after?: () => void) {
-      const el = ref.current;
-      if (!el) return;
-
-      el.style.transition = `transform ${durationMs}ms ease`;
+      root.style.transition = `transform ${durationMs}ms ease`;
       setTranslate(dx);
 
       window.setTimeout(() => {
-        const el2 = ref.current;
-        if (!el2) return;
-
-        el2.style.transition = originalTransition;
+        root.style.transition = originalTransition;
         after?.();
       }, durationMs);
     }
 
     function onTouchStart(e: TouchEvent) {
-      const el = ref.current;
-      if (!el) return;
       if (e.touches.length !== 1) return;
 
       const t = e.touches[0];
@@ -79,56 +60,55 @@ export function useSwipeToCloseDrag(
       startY = t.clientY;
       startT = Date.now();
 
-      dragging = false;
-      locked = false;
+      mode = 'undecided';
       lastDx = 0;
 
-      el.style.willChange = 'transform';
+      root.style.willChange = 'transform';
     }
 
     function onTouchMove(e: TouchEvent) {
-      const el = ref.current;
-      if (!el) return;
       if (e.touches.length !== 1) return;
 
       const t = e.touches[0];
       const dx = t.clientX - startX;
       const dy = t.clientY - startY;
 
-      if (!locked) {
-        const ax = Math.abs(dx);
-        const ay = Math.abs(dy);
+      const ax = Math.abs(dx);
+      const ay = Math.abs(dy);
 
+      // wait until movement is intentional
+      if (mode === 'undecided') {
         if (ax < slopPx && ay < slopPx) return;
 
-        locked = true;
+        // Require horizontal dominance by a ratio (more reliable)
+        const horizontalWins = ax > ay * 1.2;
 
-        // mostly vertical => allow scrolling
-        if (ay > ax) return;
+        mode = horizontalWins ? 'horizontal' : 'vertical';
 
-        dragging = true;
-        el.style.transition = 'none';
+        if (mode === 'horizontal') {
+          root.style.transition = 'none';
+        } else {
+          // vertical scroll: do nothing
+          root.style.willChange = originalWillChange || '';
+          return;
+        }
       }
 
-      if (!dragging) return;
+      if (mode !== 'horizontal') return;
 
+      // prevent page scroll while dragging horizontally
       e.preventDefault();
       setTranslate(dx);
     }
 
     function onTouchEnd() {
-      const el = ref.current;
-      if (!el) return;
+      root.style.willChange = originalWillChange || '';
 
-      el.style.willChange = originalWillChange || '';
-
-      if (!dragging) {
-        el.style.transition = originalTransition;
-        el.style.transform = originalTransform;
+      if (mode !== 'horizontal') {
+        root.style.transition = originalTransition;
+        root.style.transform = originalTransform;
         return;
       }
-
-      dragging = false;
 
       const dt = Math.max(1, Date.now() - startT);
       const velocity = lastDx / dt;
@@ -138,24 +118,20 @@ export function useSwipeToCloseDrag(
 
       if (shouldClose) {
         const width = window.innerWidth || 400;
-
         snapTo(width, () => {
-          const el2 = ref.current;
-          if (!el2) return;
-
-          el2.style.transform = originalTransform;
-          el2.style.transition = originalTransition;
+          root.style.transform = originalTransform;
+          root.style.transition = originalTransition;
           onClose();
         });
       } else {
         snapTo(0, () => {
-          const el2 = ref.current;
-          if (!el2) return;
-
-          el2.style.transform = originalTransform;
-          el2.style.transition = originalTransition;
+          root.style.transform = originalTransform;
+          root.style.transition = originalTransition;
         });
       }
+
+      mode = 'undecided';
+      lastDx = 0;
     }
 
     root.addEventListener('touchstart', onTouchStart, { passive: true });
@@ -169,22 +145,9 @@ export function useSwipeToCloseDrag(
       root.removeEventListener('touchend', onTouchEnd);
       root.removeEventListener('touchcancel', onTouchEnd);
 
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      const el3 = ref.current;
-      if (el3) {
-        el3.style.willChange = originalWillChange || '';
-        el3.style.transition = originalTransition;
-        el3.style.transform = originalTransform;
-      }
+      root.style.willChange = originalWillChange || '';
+      root.style.transition = originalTransition;
+      root.style.transform = originalTransform;
     };
-  }, [
-    ref,
-    onClose,
-    enabled,
-    enabledMediaQuery,
-    thresholdPx,
-    velocityPxPerMs,
-    slopPx,
-    durationMs,
-  ]);
+  }, [el, onClose, enabled, thresholdPx, velocityPxPerMs, slopPx, durationMs]);
 }

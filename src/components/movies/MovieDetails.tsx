@@ -8,7 +8,7 @@ import ErrorMessage from '../ui/ErrorMessage';
 import StarRating from '../ui/StarRating';
 
 import { useKey } from '../../hooks/useKey';
-import { useSwipeToClose } from '../../hooks/useSwipeToClose';
+import { useSwipeToCloseDrag } from '../../hooks/useSwipeToCloseDrag';
 
 import type { WatchedMovie } from '../../types/movies';
 
@@ -35,9 +35,10 @@ export default function MovieDetails({
   selectedId,
   onCloseMovie,
   onAddWatched,
-  // onTitleChange,
+  onTitleChange,
   watched,
 }: MovieDetailsProps) {
+  const [rootEl, setRootEl] = useState<HTMLDivElement | null>(null);
   const [movie, setMovie] = useState<OmdbMovieSuccess | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
@@ -53,20 +54,16 @@ export default function MovieDetails({
   const watchedUserRating =
     watched.find((m) => m.imdbID === selectedId)?.userRating ?? 0;
 
-  const detailsRef = useRef<HTMLDivElement>(null);
-  useSwipeToClose(detailsRef, onCloseMovie, { enabled: true, thresholdPx: 90 });
+  // const detailsRef = useRef<HTMLDivElement | null>(null);
+  useSwipeToCloseDrag(rootEl, onCloseMovie, {
+    enabled: true,
+    thresholdPx: 110,
+  });
 
   useEffect(() => {
-    if (!movie?.Title) return;
-
-    // const prev = document.title;
-    document.title = `Movie | ${movie.Title}`;
-
-    return () => {
-      document.title = 'usePopcorn v2.0';
-      // or: document.title = prev; (either is fine)
-    };
-  }, [movie?.Title]);
+    onTitleChange?.(movie?.Title ? `Movie | ${movie.Title}` : null);
+    return () => onTitleChange?.(null);
+  }, [movie?.Title, onTitleChange]);
 
   // Prefill draft rating on open/switch
   useEffect(() => {
@@ -168,7 +165,7 @@ export default function MovieDetails({
   if (!movie) return <div className='details' />;
 
   return (
-    <div className='details' ref={detailsRef}>
+    <div className='details' ref={setRootEl}>
       <header>
         <button className='btn-back' onClick={onCloseMovie}>
           <ArrowLeft size={24} />
