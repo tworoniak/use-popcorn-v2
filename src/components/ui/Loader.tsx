@@ -6,7 +6,7 @@ export default function Loader({ text = 'Loading...' }: LoaderProps) {
   return (
     <>
       <p className='loader'>{text}</p>
-      <ClipLoader />;
+      <ClipLoader color='#FFF111' loading size={55} />;
     </>
   );
 }
