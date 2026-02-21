@@ -3,10 +3,10 @@ import { useEffect } from 'react';
 
 type Options = {
   enabled?: boolean;
-  thresholdPx?: number;
-  velocityPxPerMs?: number;
-  slopPx?: number;
-  durationMs?: number;
+  thresholdPx?: number; // distance to trigger close
+  velocityPxPerMs?: number; // quick flick closes
+  slopPx?: number; // ignore tiny jitter
+  durationMs?: number; // snap animation duration
 };
 
 export function useSwipeToCloseDrag(
@@ -47,6 +47,7 @@ export function useSwipeToCloseDrag(
       setTranslate(dx);
 
       window.setTimeout(() => {
+        // element might still exist; restore inline transition so CSS can take over
         root.style.transition = originalTransition;
         after?.();
       }, durationMs);
@@ -76,19 +77,17 @@ export function useSwipeToCloseDrag(
       const ax = Math.abs(dx);
       const ay = Math.abs(dy);
 
-      // wait until movement is intentional
       if (mode === 'undecided') {
         if (ax < slopPx && ay < slopPx) return;
 
-        // Require horizontal dominance by a ratio (more reliable)
+        // require horizontal dominance (avoids fighting vertical scroll)
         const horizontalWins = ax > ay * 1.2;
-
         mode = horizontalWins ? 'horizontal' : 'vertical';
 
         if (mode === 'horizontal') {
           root.style.transition = 'none';
         } else {
-          // vertical scroll: do nothing
+          // allow normal vertical scrolling
           root.style.willChange = originalWillChange || '';
           return;
         }
@@ -101,24 +100,28 @@ export function useSwipeToCloseDrag(
       setTranslate(dx);
     }
 
-    function onTouchEnd() {
+    function finishGesture() {
       root.style.willChange = originalWillChange || '';
 
       if (mode !== 'horizontal') {
         root.style.transition = originalTransition;
         root.style.transform = originalTransform;
+        mode = 'undecided';
+        lastDx = 0;
         return;
       }
 
       const dt = Math.max(1, Date.now() - startT);
-      const velocity = lastDx / dt;
+      const velocity = lastDx / dt; // px/ms
 
       const shouldClose =
         lastDx >= thresholdPx || (velocity >= velocityPxPerMs && lastDx >= 60);
 
       if (shouldClose) {
         const width = window.innerWidth || 400;
+
         snapTo(width, () => {
+          // restore inline styles before closing
           root.style.transform = originalTransform;
           root.style.transition = originalTransition;
           onClose();
@@ -136,14 +139,14 @@ export function useSwipeToCloseDrag(
 
     root.addEventListener('touchstart', onTouchStart, { passive: true });
     root.addEventListener('touchmove', onTouchMove, { passive: false });
-    root.addEventListener('touchend', onTouchEnd, { passive: true });
-    root.addEventListener('touchcancel', onTouchEnd, { passive: true });
+    root.addEventListener('touchend', finishGesture, { passive: true });
+    root.addEventListener('touchcancel', finishGesture, { passive: true });
 
     return () => {
       root.removeEventListener('touchstart', onTouchStart);
       root.removeEventListener('touchmove', onTouchMove);
-      root.removeEventListener('touchend', onTouchEnd);
-      root.removeEventListener('touchcancel', onTouchEnd);
+      root.removeEventListener('touchend', finishGesture);
+      root.removeEventListener('touchcancel', finishGesture);
 
       root.style.willChange = originalWillChange || '';
       root.style.transition = originalTransition;
