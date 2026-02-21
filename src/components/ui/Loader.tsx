@@ -1,16 +1,13 @@
-import { ClipLoader } from 'react-spinners';
+import { BeatLoader } from 'react-spinners';
 
 type LoaderProps = { text?: string };
 
 export default function Loader({ text = 'Loading...' }: LoaderProps) {
   return (
-    <>
-      <p className='loader'>{text}</p>
-      <ClipLoader color='#FFF111' loading size={55} />;
-    </>
+    <div className='loader'>
+      <p>{text}</p>
+
+      <BeatLoader color='#FFF' loading size={24} />
+    </div>
   );
 }
-
-// export default function Loader() {
-//   return <ClipLoader />;
-// }
