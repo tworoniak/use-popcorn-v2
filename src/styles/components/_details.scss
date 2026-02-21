@@ -20,15 +20,6 @@
     height: auto;
   }
 
-  // @media (max-width: $bp-md) {
-  //   position: fixed;
-  //   inset: 0;
-  //   background: var(--color-background-900);
-  //   z-index: 5000;
-  //   overflow-y: auto;
-  //   border-radius: 0;
-  // }
-
   header {
     display: flex;
   }
@@ -167,31 +158,35 @@
   }
 }
 
-/* ✅ Mobile overlay */
-@media (max-width: 600px) {
-  /* when details are shown, don't hide watched by opacity only; keep it accessible behind */
+// Mobile overlay behavior
+@media (max-width: 1024px) {
+  .panel {
+    position: relative;
+  }
+
   .panel__pane--watched.is-hidden {
-    opacity: 1;
-    pointer-events: auto;
+    display: none;
   }
 
   .panel__pane--details {
-    position: fixed; /* 👈 overlay the whole screen */
+    position: fixed;
     inset: 0;
-    z-index: 9999;
-    height: 100dvh; /* modern mobile viewport unit */
-    width: 100vw;
+    z-index: 50;
 
-    background: var(--color-background-900);
-    transform: translateX(100%); /* slide in from right */
-    opacity: 1; /* avoid fade/flash */
-    pointer-events: auto;
+    background: var(--color-background-500);
 
-    /* optional: feel more native */
+    // IMPORTANT for swipe + smooth movement
     will-change: transform;
-    transition: transform 220ms ease;
+    transform: translateX(100%);
+    transition: transform 180ms ease;
 
-    touch-action: pan-y;
+    // IMPORTANT: allow vertical scrolling inside details
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    // IMPORTANT: helps touch event behavior (esp. Chrome/Android)
+    touch-action: pan-y; // allow vertical scroll; we handle horizontal swipe
+    overscroll-behavior: contain;
   }
 
   .panel__pane--details.is-active {
