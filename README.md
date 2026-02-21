@@ -193,7 +193,6 @@ src/
     useLocalStorageState.ts
     useMovies.ts
     useOnlineStatus.ts
-    useSwipeToClose.ts
     useSwipeToCloseDrag.ts
     useTheme.ts
     useToast.ts
