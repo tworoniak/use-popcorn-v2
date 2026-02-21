@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-
+// src/components/movies/MovieDetails.tsx
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 
 import Poster from '../ui/Poster';
@@ -38,7 +38,9 @@ export default function MovieDetails({
   onTitleChange,
   watched,
 }: MovieDetailsProps) {
+  // Attach swipe handlers to the *outermost* root of the details panel.
   const [rootEl, setRootEl] = useState<HTMLDivElement | null>(null);
+
   const [movie, setMovie] = useState<OmdbMovieSuccess | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
@@ -51,21 +53,33 @@ export default function MovieDetails({
   const retry = () => setRetryKey((k) => k + 1);
 
   const isWatched = watched.some((m) => m.imdbID === selectedId);
-  const watchedUserRating =
-    watched.find((m) => m.imdbID === selectedId)?.userRating ?? 0;
+  const watchedEntry = watched.find((m) => m.imdbID === selectedId);
+  const watchedUserRating = watchedEntry?.userRating ?? 0;
 
-  // const detailsRef = useRef<HTMLDivElement | null>(null);
-  useSwipeToCloseDrag(rootEl, onCloseMovie, {
+  const handleClose = useCallback(() => {
+    onCloseMovie();
+  }, [onCloseMovie]);
+
+  // Swipe-to-close (mobile). You can gate enabled by media query if you want,
+  // but enabled: true is fine because the gesture only triggers on touch events.
+  useSwipeToCloseDrag(rootEl, handleClose, {
     enabled: true,
     thresholdPx: 110,
+    velocityPxPerMs: 0.6,
+    slopPx: 10,
+    durationMs: 180,
   });
 
+  // Keyboard close
+  useKey('Escape', handleClose);
+
+  // Title updates (if you’re using Shell/App to manage document.title)
   useEffect(() => {
     onTitleChange?.(movie?.Title ? `Movie | ${movie.Title}` : null);
     return () => onTitleChange?.(null);
   }, [movie?.Title, onTitleChange]);
 
-  // Prefill draft rating on open/switch
+  // Prefill rating when switching movies / opening details
   useEffect(() => {
     setUserRating(watchedUserRating);
     countRef.current = 0;
@@ -75,8 +89,7 @@ export default function MovieDetails({
     if (userRating > 0) countRef.current++;
   }, [userRating]);
 
-  useKey('Escape', onCloseMovie);
-
+  // Load details (cache-first, then refresh)
   useEffect(() => {
     const controller = new AbortController();
     const cached = getCachedMovieDetails(selectedId);
@@ -116,7 +129,6 @@ export default function MovieDetails({
     }
 
     load();
-
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId, retryKey]);
@@ -124,8 +136,9 @@ export default function MovieDetails({
   function handleAdd() {
     if (!movie) return;
 
+    // If already watched and unchanged, just close
     if (isWatched && userRating === watchedUserRating) {
-      onCloseMovie();
+      handleClose();
       return;
     }
 
@@ -140,34 +153,37 @@ export default function MovieDetails({
       runtime: parseRuntime(movie.Runtime),
       userRating,
       countRatingDecisions: countRef.current,
-      createdAt: watched.find((m) => m.imdbID === selectedId)?.createdAt ?? now,
+      createdAt: watchedEntry?.createdAt ?? now,
       updatedAt: now,
     };
 
     onAddWatched(newWatchedMovie);
-    onCloseMovie();
+    handleClose();
   }
 
-  if (isLoading && !movie)
+  // States
+  if (isLoading && !movie) {
     return (
-      <div className='details'>
+      <div className='details' ref={setRootEl}>
         <Loader />
       </div>
     );
+  }
 
-  if (error && !movie)
+  if (error && !movie) {
     return (
-      <div className='details'>
+      <div className='details' ref={setRootEl}>
         <ErrorMessage message={error} onRetry={retry} />
       </div>
     );
+  }
 
-  if (!movie) return <div className='details' />;
+  if (!movie) return <div className='details' ref={setRootEl} />;
 
   return (
     <div className='details' ref={setRootEl}>
       <header>
-        <button className='btn-back' onClick={onCloseMovie}>
+        <button className='btn-back' onClick={handleClose}>
           <ArrowLeft size={24} />
         </button>
 
