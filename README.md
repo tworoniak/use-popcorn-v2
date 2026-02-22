@@ -234,6 +234,7 @@ src/
 
   types/
     movies.ts
+    recent.ts
     watched.ts
 
   utils/

@@ -24,6 +24,12 @@ type MovieDetailsProps = {
   onAddWatched: (movie: WatchedMovie) => void;
   watched: WatchedMovie[];
   onTitleChange?: (title: string | null) => void;
+  onViewed?: (movie: {
+    imdbID: string;
+    Title: string;
+    Year: string;
+    Poster: string;
+  }) => void;
 };
 
 function parseRuntime(runtime: string): number {
@@ -36,6 +42,7 @@ export default function MovieDetails({
   onCloseMovie,
   onAddWatched,
   onTitleChange,
+  onViewed,
   watched,
 }: MovieDetailsProps) {
   // Attach swipe handlers to the *outermost* root of the details panel.
@@ -132,6 +139,17 @@ export default function MovieDetails({
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId, retryKey]);
+
+  useEffect(() => {
+    if (!movie) return;
+
+    onViewed?.({
+      imdbID: selectedId,
+      Title: movie.Title,
+      Year: movie.Year,
+      Poster: movie.Poster,
+    });
+  }, [movie, onViewed, selectedId]);
 
   function handleAdd() {
     if (!movie) return;

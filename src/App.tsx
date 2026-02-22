@@ -15,14 +15,17 @@ import { useKey } from './hooks/useKey';
 import { useTheme } from './hooks/useTheme';
 import { useOnlineStatus } from './hooks/useOnlineStatus';
 import { useToast } from './hooks/useToast';
+import { useRecentlyViewed } from './hooks/useRecentlyViewed';
 
 import type { WatchedMovie } from './types/movies';
+
+// import type { OmdbMovieSuccess } from './api/omdbDetailsCache';
 
 import Header from './components/layout/Header';
 import NavBar from './components/layout/NavBar';
 import Main from './components/layout/Main';
 import Box from './components/layout/Box';
-
+import RecentlyViewed from './components/movies/RecentlyViewed';
 import Search from './components/movies/Search';
 import NumResults from './components/movies/NumResults';
 import MovieList from './components/movies/MovieList';
@@ -62,7 +65,7 @@ function Shell({ mode }: ShellProps) {
   const page = Number(searchParams.get('page') ?? '1') || 1;
 
   const debouncedQuery = useDebounce(query, 400);
-
+  const { recent, addRecent, clearRecent } = useRecentlyViewed(8);
   const { movies, isLoading, isFetching, error, totalResults, retry } =
     useMovies(debouncedQuery, page);
 
@@ -142,7 +145,17 @@ function Shell({ mode }: ShellProps) {
   }
 
   function handleSelectMovie(id: string) {
-    // preserve q/page in URL
+    const picked = movies.find((m) => m.imdbID === id);
+
+    if (picked) {
+      addRecent({
+        imdbID: picked.imdbID,
+        Title: picked.Title,
+        Year: picked.Year,
+        Poster: picked.Poster,
+      });
+    }
+
     const qs = new URLSearchParams(searchParams);
     navigate(`/movie/${id}?${qs.toString()}`);
   }
@@ -237,6 +250,11 @@ function Shell({ mode }: ShellProps) {
       <Main>
         <Box scrollId='movies-scroll'>
           <NetworkBanner isOnline={isOnline} />
+          <RecentlyViewed
+            items={recent}
+            onOpen={(id) => handleSelectMovie(id)}
+            onClear={clearRecent}
+          />
 
           {query.trim().length < 3 && (
             <EmptyState
@@ -302,6 +320,8 @@ function Shell({ mode }: ShellProps) {
               onCloseMovie={handleCloseMovie}
               onAddWatched={handleAddWatched}
               watched={watched}
+              // onTitleChange={setPageTitle}
+              onViewed={(m) => addRecent(m)}
             />
           ) : (
             <>
