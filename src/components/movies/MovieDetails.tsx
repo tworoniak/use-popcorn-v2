@@ -45,8 +45,12 @@ export default function MovieDetails({
   onViewed,
   watched,
 }: MovieDetailsProps) {
-  // Attach swipe handlers to the *outermost* root of the details panel.
+  // attach swipe handlers to the *outermost* root of the details panel
   const [rootEl, setRootEl] = useState<HTMLDivElement | null>(null);
+
+  const setRootRef = useCallback((node: HTMLDivElement | null) => {
+    setRootEl(node);
+  }, []);
 
   const [movie, setMovie] = useState<OmdbMovieSuccess | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -59,16 +63,32 @@ export default function MovieDetails({
   const [retryKey, setRetryKey] = useState(0);
   const retry = () => setRetryKey((k) => k + 1);
 
-  const isWatched = watched.some((m) => m.imdbID === selectedId);
   const watchedEntry = watched.find((m) => m.imdbID === selectedId);
+  const isWatched = !!watchedEntry;
   const watchedUserRating = watchedEntry?.userRating ?? 0;
+
+  // inside MovieDetails component
+  const lastViewedIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!onViewed) return;
+    if (!movie?.Title) return;
+
+    if (lastViewedIdRef.current === selectedId) return;
+    lastViewedIdRef.current = selectedId;
+
+    onViewed({
+      imdbID: selectedId,
+      Title: movie.Title,
+      Year: movie.Year,
+      Poster: movie.Poster,
+    });
+  }, [selectedId, movie?.Title, movie?.Year, movie?.Poster, onViewed]);
 
   const handleClose = useCallback(() => {
     onCloseMovie();
   }, [onCloseMovie]);
 
-  // Swipe-to-close (mobile). You can gate enabled by media query if you want,
-  // but enabled: true is fine because the gesture only triggers on touch events.
   useSwipeToCloseDrag(rootEl, handleClose, {
     enabled: true,
     thresholdPx: 110,
@@ -77,10 +97,8 @@ export default function MovieDetails({
     durationMs: 180,
   });
 
-  // Keyboard close
   useKey('Escape', handleClose);
 
-  // Title updates (if you’re using Shell/App to manage document.title)
   useEffect(() => {
     onTitleChange?.(movie?.Title ? `Movie | ${movie.Title}` : null);
     return () => onTitleChange?.(null);
@@ -140,6 +158,7 @@ export default function MovieDetails({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId, retryKey]);
 
+  // Recently viewed callback (upgrade entry with the “best” data)
   useEffect(() => {
     if (!movie) return;
 
@@ -154,7 +173,6 @@ export default function MovieDetails({
   function handleAdd() {
     if (!movie) return;
 
-    // If already watched and unchanged, just close
     if (isWatched && userRating === watchedUserRating) {
       handleClose();
       return;
@@ -179,10 +197,9 @@ export default function MovieDetails({
     handleClose();
   }
 
-  // States
   if (isLoading && !movie) {
     return (
-      <div className='details' ref={setRootEl}>
+      <div className='details' ref={setRootRef}>
         <Loader />
       </div>
     );
@@ -190,16 +207,16 @@ export default function MovieDetails({
 
   if (error && !movie) {
     return (
-      <div className='details' ref={setRootEl}>
+      <div className='details' ref={setRootRef}>
         <ErrorMessage message={error} onRetry={retry} />
       </div>
     );
   }
 
-  if (!movie) return <div className='details' ref={setRootEl} />;
+  if (!movie) return <div className='details' ref={setRootRef} />;
 
   return (
-    <div className='details' ref={setRootEl}>
+    <div className='details' ref={setRootRef}>
       <header>
         <button className='btn-back' onClick={handleClose}>
           <ArrowLeft size={24} />
@@ -216,10 +233,12 @@ export default function MovieDetails({
               </span>
             )}
           </h2>
+
           <p>
             {movie.Released} &bull; {movie.Runtime}
           </p>
           <p>{movie.Genre}</p>
+
           <p>
             <span>⭐️</span>
             {movie.imdbRating} IMDb rating
@@ -253,7 +272,7 @@ export default function MovieDetails({
             </p>
           )}
 
-          {error && movie && (
+          {error && (
             <p className='details-error' role='status' aria-live='polite'>
               <span>⛔️</span> {error}{' '}
               <button

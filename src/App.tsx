@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'; // , useState
+import { useEffect, useMemo, useCallback } from 'react'; // , useState
 import {
   Navigate,
   Route,
@@ -122,6 +122,13 @@ function Shell({ mode }: ShellProps) {
     });
     setSearchParams(next, { replace: false });
   }
+
+  const handleViewed = useCallback(
+    (movie: Parameters<typeof addRecent>[0]) => {
+      addRecent(movie);
+    },
+    [addRecent],
+  );
 
   function handleSetQuery(nextQuery: string) {
     const prevTrim = query.trim();
@@ -321,7 +328,7 @@ function Shell({ mode }: ShellProps) {
               onAddWatched={handleAddWatched}
               watched={watched}
               // onTitleChange={setPageTitle}
-              onViewed={(m) => addRecent(m)}
+              onViewed={handleViewed}
             />
           ) : (
             <>

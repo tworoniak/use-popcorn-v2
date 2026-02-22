@@ -162,6 +162,7 @@ src/
       MovieItem.tsx
       MovieList.tsx
       NumResults.tsx
+      RecentlyViewed.tsx
       Search.tsx
       WatchedControls.tsx
       WatchedList.tsx
@@ -193,6 +194,7 @@ src/
     useLocalStorageState.ts
     useMovies.ts
     useOnlineStatus.ts
+    useRecentlyViewed.ts
     useSwipeToCloseDrag.ts
     useTheme.ts
     useToast.ts
@@ -214,6 +216,7 @@ src/
       _index.scss
       _lists.scss
       _pagination.scss
+      _recent.scss
       _skeleton.scss
       _star-rating.scss
       _states.scss
