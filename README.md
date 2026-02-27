@@ -13,6 +13,7 @@ Search for movies via the OMDb API, explore detailed information, rate films, an
 
 ![usePopcorn screen 1.](/src/assets/screen-01.png 'usePopcorn screen 1.')
 ![usePopcorn screen 2.](/src/assets/screen-02.png 'usePopcorn screen 2.')
+![usePopcorn screen 3.](/src/assets/screen-03.png 'usePopcorn screen 3.')
 
 ---
 
