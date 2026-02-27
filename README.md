@@ -7,6 +7,15 @@ Search for movies via the OMDb API, explore detailed information, rate films, an
 
 ---
 
+## 🚀 Live Demo
+
+[usePopcorn v2.0](https://use-popcorn-v2-ruby.vercel.app)
+
+![usePopcorn screen 1.](/src/assets/screen-01.png 'usePopcorn screen 1.')
+![usePopcorn screen 2.](/src/assets/screen-02.png 'usePopcorn screen 2.')
+
+---
+
 ## ✨ Features
 
 - 🔍 Search movies using the **OMDb API**
